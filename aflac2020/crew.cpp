@@ -63,10 +63,11 @@ Radioman::~Radioman() {
     fclose(bt);
 }
 
-Observer::Observer(Motor* lm, Motor* rm, TouchSensor* ts, SonarSensor* ss, GyroSensor* gs, ColorSensor* cs) {
+Observer::Observer(Motor* lm, Motor* rm, Motor* am, TouchSensor* ts, SonarSensor* ss, GyroSensor* gs, ColorSensor* cs) {
     _debug(syslog(LOG_NOTICE, "%08u, Observer constructor", clock->now()));
     leftMotor   = lm;
     rightMotor  = rm;
+    armMotor = am;
     touchSensor = ts;
     sonarSensor = ss;
     gyroSensor  = gs;
@@ -145,8 +146,14 @@ void Observer::operate() {
     g_rgb = cur_rgb;
     g_hsv = cur_hsv;
     // calculate gray scale and save them to the global area
-    g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 150 + cur_rgb.b * 29) / 256;
-    g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 150 + (cur_rgb.b - cur_rgb.g) * 29) / 256; // B - G cuts off blue
+    g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 130 + cur_rgb.b * 29) / 236;
+    g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 130 + (cur_rgb.b - cur_rgb.g) * 29) / 236; // B - G cuts off blue
+    // g_grayScale = cur_rgb.r * 0.299 + cur_rgb.g * 0.587 + cur_rgb.b * 0.114;
+    // g_grayScaleBlueless = (cur_rgb.r * 0.299 + cur_rgb.g * 0.587 + (cur_rgb.b - cur_rgb.g) * 0.114); // B - G cuts off blue
+
+//   g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 100 + cur_rgb.b * 29) / 256;
+//   g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 100 + (cur_rgb.b - cur_rgb.g) * 29) / 256; // B - G cuts off blue
+
     // save gyro sensor output to the global area
     g_angle = gyroSensor->getAngle();
     g_anglerVelocity = gyroSensor->getAnglerVelocity();
@@ -244,13 +251,22 @@ void Observer::operate() {
         }
         int32_t x = getLocX();
         if ( (ma_gs > 150) || (ma_gs < -150) ){
-            syslog(LOG_NOTICE, "gs = %d, MA = %d, gsDiff = %d, timeDiff = %d", g_grayScale, ma_gs, gsDiff, timeDiff);
-            if ( !blue_flag && (ma_gs > 150) && ((x > 4300) || (x < -4300)) ) {
+            //syslog(LOG_NOTICE, "gs = %d, MA = %d, gsDiff = %d, timeDiff = %d", g_grayScale, ma_gs, gsDiff, timeDiff);
+            if ( !blue_flag && (ma_gs > 150) && ((x > 4300) || (
+                x < -4300)) ) {
                 blue_flag = true;
                 syslog(LOG_NOTICE, "%08u, line color changed black to blue", clock->now());
                 captain->decide(EVT_bk2bl);
             }
         }
+        //         if ( (ma_gs > 150) || (ma_gs < -150) ){
+        //     syslog(LOG_NOTICE, "gs = %d, MA = %d, gsDiff = %d, timeDiff = %d", g_grayScale, ma_gs, gsDiff, timeDiff);
+        //     if ( !blue_flag && (ma_gs > 150) && ((x > 4300) || (x < -4300)) ) {
+        //         blue_flag = true;
+        //         syslog(LOG_NOTICE, "%08u, line color changed black to blue", clock->now());
+        //         captain->decide(EVT_bk2bl);
+        //     }
+        // }
 
         // determine if tilt
         if ( check_tilt() ) {
@@ -260,14 +276,21 @@ void Observer::operate() {
     
     // display trace message in every PERIOD_TRACE_MSG ms */
     int32_t d = getDistance();
+
+    //sano
+    int32_t dis = sonarSensor->getDistance();
+    if(dis < 12){
+        armMotor->setPWM(100);
+    }
+    //sano
     if (++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) {
     //if ((++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) && (d < 11000)) {
         traceCnt = 0;
-        //_debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), getDistance(), getAzimuth(), getLocX(), getLocY()));
-        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
-        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
-        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
-        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): angle = %d, anglerVelocity = %d", clock->now(), g_angle, g_anglerVelocity));
+        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), dis, getAzimuth(), getLocX(), getLocY()));
+     //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
+     //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
+      //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
+     //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): angle = %d, anglerVelocity = %d", clock->now(), g_angle, g_anglerVelocity));
     //} else if (d >= 11000) {
     //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
     //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
@@ -280,7 +303,7 @@ void Observer::goOffDuty() {
     stp_cyc(CYC_OBS_TSK);
     //clock->sleep() seems to be still taking milisec parm
     clock->sleep(PERIOD_OBS_TSK/2/1000); // wait a while
-    _debug(syslog(LOG_NOTICE, "%08u, Observer handler unset", clock->now()));
+   // _debug(syslog(LOG_NOTICE, "%08u, Observer handler unset", clock->now()));
 }
 
 bool Observer::check_touch(void) {
@@ -450,7 +473,7 @@ void LineTracer::operate() {
     // display pwm in every PERIOD_TRACE_MSG ms */
     if (++trace_pwmLR * PERIOD_NAV_TSK >= PERIOD_TRACE_MSG) {
         trace_pwmLR = 0;
-        _debug(syslog(LOG_NOTICE, "%08u, LineTracer::operate(): pwm_L = %d, pwm_R = %d", clock->now(), pwm_L, pwm_R));
+        //_debug(syslog(LOG_NOTICE, "%08u, LineTracer::operate(): pwm_L = %d, pwm_R = %d", clock->now(), pwm_L, pwm_R));
         /*
         _debug(syslog(LOG_NOTICE, "%08u, LineTracer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), observer->getDistance(), observer->getAzimuth(), observer->getLocX(), observer->getLocY()));
         */
@@ -485,14 +508,15 @@ void Captain::takeoff() {
     gyroSensor  = new GyroSensor(PORT_4);
     leftMotor   = new Motor(PORT_C);
     rightMotor  = new Motor(PORT_B);
-    tailMotor   = new Motor(PORT_A);
+    tailMotor   = new Motor(PORT_D);
+    armMotor   = new Motor(PORT_A); //sano
     steering    = new Steering(*leftMotor, *rightMotor);
     
     /* LCD画面表示 */
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
     ev3_lcd_draw_string("EV3way-ET aflac2020", 0, CALIB_FONT_HEIGHT*1);
     
-    observer = new Observer(leftMotor, rightMotor, touchSensor, sonarSensor, gyroSensor, colorSensor);
+    observer = new Observer(leftMotor, rightMotor, armMotor, touchSensor, sonarSensor, gyroSensor, colorSensor);
     observer->freeze(); // Do NOT attempt to collect sensor data until unfreeze() is invoked
     observer->goOnDuty();
     limboDancer = new LimboDancer(leftMotor, rightMotor, tailMotor);
@@ -574,13 +598,13 @@ void Captain::decide(uint8_t event) {
                     //limboDancer->haveControl();
                     break;
                 case EVT_bk2bl:
-                    observer->freeze();
-                    lineTracer->freeze();
-                    //lineTracer->setSpeed(Motor::PWM_MAX);
-                    //clock->sleep() seems to be still taking milisec parm
-                    clock->sleep(5000); // wait a little
-                    lineTracer->unfreeze();
-                    observer->unfreeze();
+                    // observer->freeze();
+                    // lineTracer->freeze();
+                    // //lineTracer->setSpeed(Motor::PWM_MAX);
+                    // //clock->sleep() seems to be still taking milisec parm
+                    // clock->sleep(5000); // wait a little
+                    // lineTracer->unfreeze();
+                    // observer->unfreeze();
                     break;
                 case EVT_cmdStop:
                     state = ST_stopping_R;
@@ -609,13 +633,13 @@ void Captain::decide(uint8_t event) {
                     //seesawCrimber->haveControl();
                     break;
                 case EVT_bk2bl:
-                    observer->freeze();
-                    lineTracer->freeze();
-                    //lineTracer->setSpeed(Motor::PWM_MAX);
-                    //clock->sleep() seems to be still taking milisec parm
-                    clock->sleep(5000); // wait a little
-                    lineTracer->unfreeze();
-                    observer->unfreeze();
+                    // observer->freeze();
+                    // lineTracer->freeze();
+                    // //lineTracer->setSpeed(Motor::PWM_MAX);
+                    // //clock->sleep() seems to be still taking milisec parm
+                    // clock->sleep(5000); // wait a little
+                    // lineTracer->unfreeze();
+                    // observer->unfreeze();
                     break;
                 case EVT_cmdStop:
                     state = ST_stopping_L;
@@ -705,6 +729,7 @@ void Captain::land() {
     delete observer;
     
     delete tailMotor;
+    delete armMotor; //sano
     delete rightMotor;
     delete leftMotor;
     delete gyroSensor;

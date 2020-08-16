@@ -67,11 +67,29 @@ extern int16_t g_angle, g_anglerVelocity;
 //#define P_CONST           0.38D  // PID constants determined by Ultimate Gain method
 //#define I_CONST           0.06D
 //#define D_CONST          0.027D
-#define P_CONST           1.00D  // PID constants determined by Ultimate Gain method
-#define I_CONST            0.0D
+#define P_CONST           0.85D  // PID constants determined by Ultimate Gain method
+#define I_CONST            0.0000000D
 #define D_CONST            0.0D
-#define SPEED_NORM           40
-#define GS_TARGET            46
+#define SPEED_NORM           55
+#define GS_TARGET            48
+
+// #define P_CONST           0.9D  // PID constants determined by Ultimate Gain method
+// #define I_CONST            0.0000001D
+// #define D_CONST            0.5D
+// #define SPEED_NORM           55
+// #define GS_TARGET            48
+
+// #define P_CONST           0.65D  // PID constants determined by Ultimate Gain method
+// #define I_CONST            0.0000001D
+// #define D_CONST            0.5D
+// #define SPEED_NORM           52
+// #define GS_TARGET            47
+
+// #define P_CONST           0.6D  // PID constants determined by Ultimate Gain method
+// #define I_CONST            0.0000001D
+// #define D_CONST            0.5D
+// #define SPEED_NORM           50
+// #define GS_TARGET            47
 
 //#define DEVICE_NAME     "ET0"  /* Bluetooth名 hrp2/target/ev3.h BLUETOOTH_LOCAL_NAMEで設定 */
 //#define PASS_KEY        "1234" /* パスキー    hrp2/target/ev3.h BLUETOOTH_PIN_CODEで設定 */
@@ -175,6 +193,7 @@ class Observer {
 private:
     Motor*          leftMotor;
     Motor*          rightMotor;
+    Motor*          armMotor; //sano
     TouchSensor*    touchSensor;
     SonarSensor*    sonarSensor;
     GyroSensor*     gyroSensor;
@@ -200,7 +219,7 @@ private:
 protected:
 public:
     Observer();
-    Observer(Motor* lm, Motor* rm, TouchSensor* ts, SonarSensor* ss, GyroSensor* gs, ColorSensor* cs);
+    Observer(Motor* lm, Motor* rm, Motor* am, TouchSensor* ts, SonarSensor* ss, GyroSensor* gs, ColorSensor* cs);
     void goOnDuty();
     void reset();
     void notifyOfDistance(int32_t delta);
@@ -275,6 +294,7 @@ private:
     Motor*          leftMotor;
     Motor*          rightMotor;
     Motor*          tailMotor;
+    Motor*          armMotor; //sano
     Steering*       steering;
     AnchorWatch*    anchorWatch;
     LineTracer*     lineTracer;

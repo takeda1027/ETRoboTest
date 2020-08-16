@@ -47,7 +47,6 @@ extern "C" {
  * Prototypes for configuration
  */
 #ifndef TOPPERS_MACRO_ONLY
-aa
 
 extern void main_task(intptr_t unused);
 extern void observer_task(intptr_t unused);
