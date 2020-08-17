@@ -63,15 +63,15 @@ extern int16_t g_angle, g_anglerVelocity;
 #define PWM_ABS_MAX          60  /* 完全停止用モータ制御PWM絶対最大値 */
 
 #define TIRE_DIAMETER    100.0F  // diameter of tire in milimater
-#define WHEEL_TREAD      175.0F  // distance between the right and left wheels
+#define WHEEL_TREAD      150.0F  // distance between the right and left wheels
 //#define P_CONST           0.38D  // PID constants determined by Ultimate Gain method
 //#define I_CONST           0.06D
 //#define D_CONST          0.027D
 #define P_CONST           0.85D  // PID constants determined by Ultimate Gain method
-#define I_CONST            0.0000000D
-#define D_CONST            0.0D
-#define SPEED_NORM           55
-#define GS_TARGET            48
+#define I_CONST            0.0000001D
+#define D_CONST            0.5D
+#define SPEED_NORM           50
+#define GS_TARGET            47
 
 // #define P_CONST           0.9D  // PID constants determined by Ultimate Gain method
 // #define I_CONST            0.0000001D
@@ -168,7 +168,8 @@ const char eventName[][EVT_NAME_LEN] = {
 
 // FIR filter parameters
 const int FIR_ORDER = 10;
-const double hn[FIR_ORDER+1] = { 2.993565708123639e-03, 9.143668394023662e-03, -3.564197579813870e-02, -3.996625085414179e-02, 2.852028479250662e-01, 5.600000000000001e-01, 2.852028479250662e-01, -3.996625085414179e-02, -3.564197579813870e-02, 9.143668394023662e-03, 2.993565708123639e-03 };
+//const double hn[FIR_ORDER+1] = { 2.993565708123639e-03, 9.143668394023662e-03, -3.564197579813870e-02, -3.996625085414179e-02, 2.852028479250662e-01, 5.600000000000001e-01, 2.852028479250662e-01, -3.996625085414179e-02, -3.564197579813870e-02, 9.143668394023662e-03, 2.993565708123639e-03 };
+const double hn[FIR_ORDER+1] = { -1.247414986406201e-18, -1.270350182429102e-02, -2.481243022283666e-02, 6.381419731491805e-02, 2.761351394755998e-01, 4.000000000000000e-01, 2.761351394755998e-01, 6.381419731491805e-02, -2.481243022283666e-02, -1.270350182429102e-02, -1.247414986406201e-18 };
 
 // moving average parameter
 const int MA_CAP = 10;
@@ -216,6 +217,11 @@ private:
     bool check_backButton(void);
     bool check_lost(void);
     bool check_tilt(void);
+
+    bool b1 =false; //sano t
+    bool b2 =false; //sano t
+
+
 protected:
 public:
     Observer();

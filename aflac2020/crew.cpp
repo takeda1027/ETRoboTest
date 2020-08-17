@@ -146,11 +146,9 @@ void Observer::operate() {
     g_rgb = cur_rgb;
     g_hsv = cur_hsv;
     // calculate gray scale and save them to the global area
-    g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 130 + cur_rgb.b * 29) / 236;
-    g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 130 + (cur_rgb.b - cur_rgb.g) * 29) / 236; // B - G cuts off blue
-    // g_grayScale = cur_rgb.r * 0.299 + cur_rgb.g * 0.587 + cur_rgb.b * 0.114;
-    // g_grayScaleBlueless = (cur_rgb.r * 0.299 + cur_rgb.g * 0.587 + (cur_rgb.b - cur_rgb.g) * 0.114); // B - G cuts off blue
-
+    g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
+    g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
+ 
 //   g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 100 + cur_rgb.b * 29) / 256;
 //   g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 100 + (cur_rgb.b - cur_rgb.g) * 29) / 256; // B - G cuts off blue
 
@@ -189,11 +187,11 @@ void Observer::operate() {
     // monitor touch sensor
     bool result = check_touch();
     if (result && !touch_flag) {
-        syslog(LOG_NOTICE, "%08u, TouchSensor flipped on", clock->now());
+    //    syslog(LOG_NOTICE, "%08u, TouchSensor flipped on", clock->now());
         touch_flag = true;
         captain->decide(EVT_touch_On);
     } else if (!result && touch_flag) {
-        syslog(LOG_NOTICE, "%08u, TouchSensor flipped off", clock->now());
+    //    syslog(LOG_NOTICE, "%08u, TouchSensor flipped off", clock->now());
         touch_flag = false;
         captain->decide(EVT_touch_Off);
     }
@@ -250,6 +248,7 @@ void Observer::operate() {
             prevGS = g_grayScale;
         }
         int32_t x = getLocX();
+ //       syslog(LOG_NOTICE, "gs = %d, MA = %d, x = %d", g_grayScale, ma_gs, x); //sano
         if ( (ma_gs > 150) || (ma_gs < -150) ){
             //syslog(LOG_NOTICE, "gs = %d, MA = %d, gsDiff = %d, timeDiff = %d", g_grayScale, ma_gs, gsDiff, timeDiff);
             if ( !blue_flag && (ma_gs > 150) && ((x > 4300) || (
@@ -259,7 +258,7 @@ void Observer::operate() {
                 captain->decide(EVT_bk2bl);
             }
         }
-        //         if ( (ma_gs > 150) || (ma_gs < -150) ){
+        //         if ( (ma_gs > 150) || (ma_gs < -150) ){LOG_NOTICE, "gs = %d
         //     syslog(LOG_NOTICE, "gs = %d, MA = %d, gsDiff = %d, timeDiff = %d", g_grayScale, ma_gs, gsDiff, timeDiff);
         //     if ( !blue_flag && (ma_gs > 150) && ((x > 4300) || (x < -4300)) ) {
         //         blue_flag = true;
@@ -276,20 +275,39 @@ void Observer::operate() {
     
     // display trace message in every PERIOD_TRACE_MSG ms */
     int32_t d = getDistance();
-
-    //sano
-    int32_t dis = sonarSensor->getDistance();
-    if(dis < 12){
-        armMotor->setPWM(100);
+    printf(",d=%d.",d);
+  //sano
+     int32_t dis = sonarSensor->getDistance();
+    printf("dis=%d.",dis);
+ 
+    //ブルー１個目の判断 前方何もなし、ラインブルーの場合　sano t
+    if( cur_rgb.b - cur_rgb.r > 60 && !b1 && dis > 250){
+        b1 =true;
+    }else if(b1 && cur_rgb.b - cur_rgb.r < 40){
+        b1 = false; //１つめのブルー検知フラグを落とす
     }
+    //スラロームが近い青でＢ２フラグ立てる
+    if(cur_rgb.b - cur_rgb.r > 60 && dis < 50){
+        b2 =true;
+        armMotor->setPWM(20);
+      //}else if(b2==1 &&  cur_rgb.b - cur_rgb.r < 40){
+      //    b2 =0;  //黒に戻ったらＢ２落とす      
+    }
+    //スラローム判定
+    if(cur_rgb.b - cur_rgb.r <= 0){
+        //ここでスラローム処理
+        //armMotor->setPWM(-50);
+    }
+
+    printf(",b-r=%d,r=%03u, g=%03u, b=%03u, b1=%d,b2=%d\n", g_rgb.b-g_rgb.r,g_rgb.r, g_rgb.g, g_rgb.b,b1,b2);
     //sano
     if (++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) {
     //if ((++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) && (d < 11000)) {
         traceCnt = 0;
-        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), dis, getAzimuth(), getLocX(), getLocY()));
+     //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), dis, getAzimuth(), getLocX(), getLocY()));
      //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
      //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
-      //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
+     //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
      //   _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): angle = %d, anglerVelocity = %d", clock->now(), g_angle, g_anglerVelocity));
     //} else if (d >= 11000) {
     //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
@@ -357,7 +375,7 @@ bool Observer::check_tilt(void) {
     if (anglerVelocity < ANG_V_TILT && anglerVelocity > (-1) * ANG_V_TILT) {
         return false;
     } else {
-        _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): TILT anglerVelocity = %d", clock->now(), anglerVelocity));
+       // _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): TILT anglerVelocity = %d", clock->now(), anglerVelocity));
         return true;
     }
 }
@@ -457,6 +475,7 @@ void LineTracer::operate() {
 
         if (state == ST_tracing_L || state == ST_stopping_L || state == ST_crimbing) {
             turn = ltPid->compute(sensor, target);
+            
         } else {
             // state == ST_tracing_R || state == ST_stopping_R || state == ST_dancing
             turn = (-1) * ltPid->compute(sensor, target);
