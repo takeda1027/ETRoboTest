@@ -41,7 +41,8 @@ private:
 
 //  PrmReq prmadd; //朋子追加
   const int8_t mThreshold = 20;
-  const int8_t pwm = (Motor::PWM_MAX) / 3;
+//  const int8_t pwm = (Motor::PWM_MAX) / 3;
+  const int8_t pwm = 52;
   float judge_c =0;
 
   float calc_prop_value(float Kp, int target,int bias);      // <1>

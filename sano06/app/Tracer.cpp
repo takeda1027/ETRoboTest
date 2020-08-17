@@ -49,7 +49,7 @@ void Tracer::run() {
   b_m_r=b_c-r_c;
   int pwm_s=0;
   int s_dis = sonar_a.getDistance();
-  printf(",b-r=%d,r=%d,g=%d,b=%d,color_no=%s,light=%d,s_dis=%d,",b_m_r,r_c,g_c,b_c,color_no,light,s_dis);
+  printf(",b-r=%d,r=%d,g=%d,b=%d,color_no=%d,light=%d,s_dis=%d,",b_m_r,r_c,g_c,b_c,color_no,light,s_dis);
 
   //１つめのブルー検出  青-赤＞60、ソナーセンサーに検知なし
   if(b_m_r > 60 && s_dis > 250 && b1 == 0){
@@ -100,10 +100,8 @@ void Tracer::run() {
   //段差をソナーセンサーで検知、駆動力上げ、ジャンプorアーム上げで突破  
   if(s_dis> 0 && s_dis < 12 && b2 ==1 &&  !slalom_flg){
 
-    //rightWheel.setPWM(100);
-    //leftWheel.setPWM(100);
     //尻尾上げる
-    pwm_s=50;
+    pwm_s=70;
 
     //腕上げる
     armWheel.setPWM(100);
@@ -117,8 +115,8 @@ void Tracer::run() {
   
   //通常モード
   if (!slalom_flg){
-    float Kp_u = 0.83;        // <1> const int8_t pwm = 2*(Motor::PWM_MAX) / 3;
-    int target_u = 18;        // <2> const int8_t pwm = 2*(Motor::PWM_MAX) / 3;
+    float Kp_u = 1.0;        // <1> const int8_t pwm = 2*(Motor::PWM_MAX) / 3;
+    int target_u = 20;        // <2> const int8_t pwm = 2*(Motor::PWM_MAX) / 3;
     int bias_u = 0;
     turn = calc_prop_value(Kp_u,target_u,bias_u); // <1>
     pwm_l = pwm - turn;      // <2>
@@ -126,19 +124,20 @@ void Tracer::run() {
 
   //スラロームに登ったら、それぞれ処理
   } else if(slalom_flg){
-    turn = calc_prop_value(0.83,5,0); // <1>
-    pwm_l = 70 - turn;      // <2>
-    pwm_r = 70 + turn;      // <2>
+    turn = calc_prop_value(0.83,15,5); // <1>
+    pwm_l = 40 - turn;      // <2>
+    pwm_r = 40 + turn;      // <2>
     //腕下げる
-    armWheel.setPWM(-100);
+    armWheel.setPWM(-20);
     //尻尾しまう
     pwm_s=-100;
     b2=0;
 
-    if(s_dis < 7){
+    if(s_dis < 13){
       printf("回転開始\n");
-      pwm_r = 0;
-      pwm_r = 10;
+      pwm_s=0;
+      pwm_l = 30- turn;
+      pwm_r = 30+ turn;
     }
 
   }
