@@ -149,8 +149,8 @@ void Observer::operate() {
     g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
     g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
  
-//   g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 100 + cur_rgb.b * 29) / 256;
-//   g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 100 + (cur_rgb.b - cur_rgb.g) * 29) / 256; // B - G cuts off blue
+//   g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
+//   g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
 
     // save gyro sensor output to the global area
     g_angle = gyroSensor->getAngle();
@@ -300,29 +300,35 @@ void Observer::operate() {
        //    b2 =0;  //黒に戻ったらＢ２落とす
     }
     //スラローム判定（スラロームに近づくとdisが徐々に小さくなるが、のった後はdisが大きくなるためそこでフラグオン）
-    if(b2){
+    if(b2 && !slalom_flg){
         b_dis=a_dis;
         a_dis=dis;
         if(a_dis>b_dis){
             slalom_flg=true;
-            //lineTracer->freeze();
-            //clock->sleep(1000); // wait a little
-            //lineTracer->unfreeze();
-
-            //armMotor->setPWM(0);
+            a_dis = 0;//初期化
+            b_dis = 0;//初期化
         }
     }
+    
     //スラローム専用処理（駆動をゼロにするだけで現状上がりっぱなし。。。）
     if(slalom_flg){
         //アーム停止
-        //armMotor->setPWM(0);
-
+        //armMotor->setPWM(-100);
+        if(!obj_flg){
+            b_dis=a_dis;
+            a_dis=dis;
+            if(a_dis<b_dis){
+                captain->decide(EVT_bk2bl); // 止める // sano;
+                obj_flg = true;
+            }
+            printf("a_dis=%d,b_dis=%d,dis=%d,\n",a_dis,b_dis,dis);
+        }
+    
         // 左下の直角カーブ対応
-        printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
+        //printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
         if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 120 && !right_angle){
             right_angle=true;
             //captain->decide(EVT_bk2bl); // sano使えるぞこれは
-            printf("きたぞきたぞ３\n");
             captain->decide(EVT_turnCnr); // ここで直角ターン
         }
     }
@@ -707,13 +713,14 @@ void Captain::decide(uint8_t event) {
                     break;
                 case EVT_bk2bl:
                 // sano
-                     observer->freeze();
-                     lineTracer->freeze();
+                    // observer->freeze();
+                    lineTracer->freeze();
                     // //lineTracer->setSpeed(Motor::PWM_MAX);
                     // //clock->sleep() seems to be still taking milisec parm
+                     armMotor->setPWM(-100); // アーム降ろす
                      clock->sleep(5000); // wait a little
                      lineTracer->unfreeze();
-                     observer->unfreeze();
+                    // observer->unfreeze();
                     break;
                 case EVT_turnCnr:
                 // sano
@@ -723,9 +730,12 @@ void Captain::decide(uint8_t event) {
                   //  observer->unfreeze();
                     lineTracer->unfreeze();
                     lineTracer->turnC(true,100,0);
-                    clock->sleep(400); // wait a little
+                    clock->sleep(300); // wait a little
                     lineTracer->turnC(false,0,0);
-                    
+                    lineTracer->freeze();
+                    clock->sleep(1000); // wait a little
+                    lineTracer->unfreeze();
+
             clock->sleep(5000);
                 case EVT_cmdStop:
                     state = ST_stopping_L;

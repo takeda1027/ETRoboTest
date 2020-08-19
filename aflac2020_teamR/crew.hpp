@@ -72,7 +72,7 @@ extern int16_t g_angle, g_anglerVelocity;
 #define P_CONST           0.85D
 #define I_CONST            0.0000001D
 #define D_CONST            0.5D
-#define SPEED_NORM           52
+#define SPEED_NORM           53
 #define GS_TARGET            47
 // sano：終了
 
@@ -208,6 +208,7 @@ private:
     bool b1 =false; //sano
     bool b2 =false; //sano
     bool slalom_flg=false; //sano
+    bool obj_flg=false; //sano
     int a_dis = 99; //sano
     int b_dis = 99; //sano
     bool right_angle =false;//sano
