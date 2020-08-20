@@ -146,9 +146,19 @@ void Observer::operate() {
     g_rgb = cur_rgb;
     g_hsv = cur_hsv;
     // calculate gray scale and save them to the global area
-    g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
-    g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
+    //g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
+    //g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
  
+    //スラローム上では、茶色地面なので青、赤を逆転っぽく sano
+    if(!slalom_flg){
+        g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
+        g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
+
+    }else{
+        g_grayScale = ((cur_rgb.r-4) * 77 + (cur_rgb.g-1) * 120 + (cur_rgb.b + 15) * 29) / 226;
+        g_grayScaleBlueless = ((cur_rgb.r-4) * 77 + (cur_rgb.g-1) * 120 +  (cur_rgb.b - cur_rgb.g + 14)  * 29) / 226; // B - G cuts off blue
+    }
+    
 //   g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
 //   g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
 
@@ -313,20 +323,21 @@ void Observer::operate() {
     //スラローム専用処理（駆動をゼロにするだけで現状上がりっぱなし。。。）
     if(slalom_flg){
         //アーム停止
-        //armMotor->setPWM(-100);
+        armMotor->setPWM(0);
         if(!obj_flg){
             b_dis=a_dis;
             a_dis=dis;
             if(a_dis<b_dis){
-                captain->decide(EVT_bk2bl); // 止める // sano;
+            //    captain->decide(EVT_bk2bl); // 止めてアーム下ろす // sano;
                 obj_flg = true;
             }
-            printf("a_dis=%d,b_dis=%d,dis=%d,\n",a_dis,b_dis,dis);
+            //printf("a_dis=%d,b_dis=%d,dis=%d,\n",a_dis,b_dis,dis);
         }
+
+//        printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
     
         // 左下の直角カーブ対応
-        //printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
-        if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 120 && !right_angle){
+        if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 100 && !right_angle){
             right_angle=true;
             //captain->decide(EVT_bk2bl); // sano使えるぞこれは
             captain->decide(EVT_turnCnr); // ここで直角ターン
@@ -489,17 +500,21 @@ void LineTracer::haveControl() {
 void LineTracer::operate() {
     //controlTail(TAIL_ANGLE_DRIVE,10); /* バランス走行用角度に制御 */
 
-    if(turn_flg){//直角ターン命令 sano
+    if(turn_flg){//直角ターン命令のため。駆動力を自由に設定可 sano
 
         pwm_L = pwm_p_L;
         pwm_R = pwm_p_R;
         leftMotor->setPWM(pwm_L);
         rightMotor->setPWM(pwm_R);
+        //printf("turn_flg経由,");
+
         
     }else{  //sano
 
         if (frozen) {
             forward = turn = 0; /* 障害物を検知したら停止 */
+           // printf("frozen経由,");
+
         } else{
             forward = speed; //前進命令
             /*
@@ -526,6 +541,8 @@ void LineTracer::operate() {
                 // state == ST_tracing_R || state == ST_stopping_R || state == ST_dancing
                 turn = (-1) * ltPid->compute(sensor, target);
             }
+            //printf("その他経由,");
+
         }
 
         /* 左右モータでロボットのステアリング操作を行う */
@@ -538,7 +555,7 @@ void LineTracer::operate() {
     } //sano
 
 
-    //printf(",pwm_L = %d, pwm_R = %d", pwm_L, pwm_R); //sano
+    //printf(",pwm_L = %d, pwm_R = %d,turn=%d,", pwm_L, pwm_R,turn); //sano
 
     // display pwm in every PERIOD_TRACE_MSG ms */
     if (++trace_pwmLR * PERIOD_NAV_TSK >= PERIOD_TRACE_MSG) {
@@ -724,19 +741,22 @@ void Captain::decide(uint8_t event) {
                     break;
                 case EVT_turnCnr:
                 // sano
-                  //  observer->freeze();
+                  //observer->freeze();
                     lineTracer->freeze();
                     clock->sleep(1000); // wait a little
                   //  observer->unfreeze();
                     lineTracer->unfreeze();
                     lineTracer->turnC(true,100,0);
-                    clock->sleep(300); // wait a little
+                    printf("ターンしています\n");
+                    clock->sleep(1000); // wait a little
+                    printf("スリープ終了した\n");
                     lineTracer->turnC(false,0,0);
+                    printf("ターンを０に\n");
                     lineTracer->freeze();
+                    printf("回転後の停止\n");
                     clock->sleep(1000); // wait a little
                     lineTracer->unfreeze();
-
-            clock->sleep(5000);
+                    printf("動き出します\n");
                 case EVT_cmdStop:
                     state = ST_stopping_L;
                     observer->notifyOfDistance(FINAL_APPROACH_LEN);
