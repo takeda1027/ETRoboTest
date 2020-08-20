@@ -82,12 +82,6 @@ extern int16_t g_angle, g_anglerVelocity;
 #define CMD_START_r     'r' // R-mode start command
 #define CMD_START_L     'L' // L-mode start command
 #define CMD_START_l     'l' // L-mode start command
-#define CMD_DANCE_D     'D'
-#define CMD_DANCE_d     'd'
-#define CMD_CRIMB_C     'C'
-#define CMD_CRIMB_c     'c'
-#define CMD_STOP_S      'S'
-#define CMD_STOP_s      's'
 
 // machine state
 #define ST_takingOff    0
@@ -118,13 +112,6 @@ const char stateName[][ST_NAME_LEN] = {
 #define EVT_touch_Off       3
 #define EVT_sonar_On        4
 #define EVT_sonar_Off       5
-#define EVT_backButton_On   6
-#define EVT_backButton_Off  7
-#define EVT_bk2bl           8
-#define EVT_bl2bk           9
-#define EVT_cmdDance        10
-#define EVT_cmdCrimb        11
-#define EVT_cmdStop         12
 #define EVT_line_lost       13
 #define EVT_line_found      14
 #define EVT_dist_reached    15
@@ -139,13 +126,6 @@ const char eventName[][EVT_NAME_LEN] = {
     "EVT_touch_Off",
     "EVT_sonar_On",
     "EVT_sonar_Off",
-    "EVT_backButton_On",
-    "EVT_backButton_Off",
-    "EVT_bk2bl",
-    "EVT_bl2bk",
-    "EVT_cmdDance",
-    "EVT_cmdCrimb",
-    "EVT_cmdStop",
     "EVT_line_lost",
     "EVT_line_found",
     "EVT_dist_reached",
@@ -190,7 +170,7 @@ private:
     int16_t traceCnt, prevGS;
     int32_t prevAngL, prevAngR, notifyDistance, gsDiff, timeDiff;
     uint64_t curTime, prevTime;
-    bool touch_flag, sonar_flag, backButton_flag, lost_flag, frozen, blue_flag;
+    bool touch_flag, sonar_flag, lost_flag, frozen, blue_flag;
     rgb_raw_t cur_rgb;
     hsv_raw_t cur_hsv;
     FIR_Transposed<FIR_ORDER> *fir_r, *fir_g, *fir_b;
@@ -201,7 +181,6 @@ private:
 
     bool check_touch(void);
     bool check_sonar(void);
-    bool check_backButton(void);
     bool check_lost(void);
     bool check_tilt(void);
 
@@ -223,8 +202,6 @@ public:
     void notifyOfDistance(int32_t delta);
     int32_t getDistance();
     int16_t getAzimuth();
-    int32_t getLocX();
-    int32_t getLocY();
     void operate(); // method to invoke from the cyclic handler
     void goOffDuty();
     void freeze();
