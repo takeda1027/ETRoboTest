@@ -310,7 +310,7 @@ void Observer::operate() {
        //    b2 =0;  //黒に戻ったらＢ２落とす
     }
     //スラローム判定（スラロームに近づくとdisが徐々に小さくなるが、のった後はdisが大きくなるためそこでフラグオン）
-    if(b2 && !slalom_flg){
+    if(b2 && !slalom_flg && !right_angle){
         b_dis=a_dis;
         a_dis=dis;
         if(a_dis>b_dis){
@@ -343,7 +343,7 @@ void Observer::operate() {
             captain->decide(EVT_turnCnr); // ここで直角ターン
         }
        //車体の傾きでスラローム終了を検知
-        printf("g_angle=%d\n");
+        printf("g_angle=%d,slalom_flg=%d\n",g_angle,slalom_flg);
          if(g_angle > 10){
             slalom_flg = false;
         }
@@ -351,7 +351,7 @@ void Observer::operate() {
     }
 
     //sano　青判定３回目
-    if( cur_rgb.b - cur_rgb.r > 60 && right_angle){
+    if( cur_rgb.b - cur_rgb.r > 60 && right_angle && !b3){
         printf(",b-r=%d,r=%d,g=%d,b=%d,right_angle=%d\n", cur_rgb.b - cur_rgb.r,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
         b3 = true;
         captain->decide(EVT_turnb3); // ソナー稼働回転、物体を見つけに行く
@@ -775,19 +775,23 @@ void Captain::decide(uint8_t event) {
                     lineTracer->freeze();
                     clock->sleep(1000); // wait a little
                     lineTracer->unfreeze();
+                    lineTracer->turnC(true,20,0);
+                    clock->sleep(2000); // wait a little
                     lineTracer->turnC(true,10,0);
-                    //ソナーを回転し物体を見つける
-                    for (int i = 0; i < 100; i++){
+                    //ソナーを回転しを見つける
+                    for (int i = 0; i < 3000; i++){
                         printf("dis_obj=%d\n",sonarSensor->getDistance());
-                        clock->sleep(100); // wait a little
+                        clock->sleep(10); // wait a little
                         if(sonarSensor->getDistance() > 190 &&sonarSensor->getDistance() <250){
-                            clock->sleep(500); // wait a little
+                        //    clock->sleep(500); // wait a little
                             lineTracer->freeze();
-                            clock->sleep(1000); // wait a little
+                            clock->sleep(500); // wait a little
                             lineTracer->unfreeze();
                             break;
                         }
                     }
+                    lineTracer->turnC(true,30,30);
+                    clock->sleep(10000); // wait a little
                     break;
                 case EVT_cmdStop:
                     state = ST_stopping_L;
