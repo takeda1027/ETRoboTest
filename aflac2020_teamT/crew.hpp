@@ -213,7 +213,8 @@ private:
     bool obj_flg=false; //sano
     int a_dis = 99; //sano
     int b_dis = 99; //sano
-    bool right_angle =false;//sano
+    bool right_angle =false; //sano
+
 
 
 protected:
@@ -307,7 +308,9 @@ private:
     LimboDancer*    limboDancer;
     int16_t b_av = 0; //sano
     int16_t n_av = 0;//sano
-    float b3_aa = 0; //sano
+    double b3_aa = 0; //sano
+    uint64_t now_tim=0; //sano
+    uint64_t before_tim=0; //sano
 protected:
 public:
     Captain();

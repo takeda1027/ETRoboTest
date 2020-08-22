@@ -25,5 +25,3 @@ INCLUDES += \
 	-I$(mkfile_path)unit
 
 #COPTS += -fno-use-cxa-atexit
-
-COPTS += -DMAKE_EV3

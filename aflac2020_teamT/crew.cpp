@@ -776,10 +776,13 @@ void Captain::decide(uint8_t event) {
                     lineTracer->unfreeze();
                     lineTracer->turnC(true,20,0);
                     clock->sleep(1000); // wait a little
+                    lineTracer->freeze();
+                    clock->sleep(1000); // wait a little
+                    lineTracer->unfreeze();
                     lineTracer->turnC(true,10,0);
-                    b3_aa = 0; //念のため角度累積を初期化
-                    b_av = 0; //念のため前角速度を初期化
-                    n_av = 0; //念のため前角速度を初期化
+                    // b3_aa = 0; //念のため角度累積を初期化
+                    // b_av = 0; //念のため前角速度を初期化
+                    // n_av = 0; //念のため前角速度を初期化
                     //ソナーを回転しを見つける
                     for (int i = 0; i < 300000; i++){
                         printf("dis_obj=%d,",sonarSensor->getDistance());
@@ -788,9 +791,12 @@ void Captain::decide(uint8_t event) {
                         //     //ソナーセンサーの放射角度20度を補正
                         //     while(b3_aa < 20){
                                  n_av = g_anglerVelocity;
-                                 b3_aa += calc_angle(n_av,b_av);
+                                 now_tim = clock->now();
+                                 b3_aa += calc_angle(n_av,b_av,now_tim - before_tim);
+                                 //printf("b3_aa=%lf,n_av=%d,now_tim=%d,",b3_aa,n_av,now_tim);
                                  b_av = n_av;
-                                printf("b3_aa=%d,n_av=%d,b_av=%d,g_anglerVelocity=%d\n",b3_aa,n_av,b_av,g_anglerVelocity);
+                                 before_tim = now_tim;
+                                //printf("b_av=%d,g_anglerVelocity=%d,before_tim=%d\n",b_av,g_anglerVelocity,before_tim);
                                 clock->sleep(10); // wait a little
                         //     }
                         //     lineTracer->freeze();

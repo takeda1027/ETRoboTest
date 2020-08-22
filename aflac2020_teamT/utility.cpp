@@ -130,8 +130,10 @@ int8_t OutlierTester::test(double sample) { // sample is an outlier when true is
     }
 }
 
-//角度計算func sano
-float calc_angle(int16_t angularVel,int16_t b_angularVel){
-    float c_angle = (angularVel + b_angularVel) * 40 /(2 * 1000);
+//角度計算　角度計算 引数：現在の角速度、前時間の角速度、時間差
+double calc_angle(int16_t angularVel,int16_t b_angularVel,uint16_t d_tim){
+    printf("n_av=%d,b_av=%d,d_tim=%d,",angularVel,b_angularVel,d_tim);
+    double c_angle = ((double)angularVel + (double)b_angularVel) * (double)d_tim /(2 * 10000*1000);
+    printf("c_angle=%lf\n",c_angle);
     return c_angle;
 }
