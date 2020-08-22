@@ -129,3 +129,9 @@ int8_t OutlierTester::test(double sample) { // sample is an outlier when true is
         return NOT_OUTLIER; // sample is NOT an outlier
     }
 }
+
+// //角度計算func sano
+// float calc_angle(int16_t angularVel,int16_t b_angularVel){
+//     float c_angle = (angularVel + b_angularVel) * 40 /(2 * 1000);
+//     return c_angle;
+// }

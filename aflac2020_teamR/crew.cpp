@@ -569,7 +569,6 @@ void LineTracer::operate() {
 
     } //sano
 
-
     //printf(",pwm_L = %d, pwm_R = %d,turn=%d,", pwm_L, pwm_R,turn); //sano
 
     // display pwm in every PERIOD_TRACE_MSG ms */
@@ -776,19 +775,28 @@ void Captain::decide(uint8_t event) {
                     clock->sleep(1000); // wait a little
                     lineTracer->unfreeze();
                     lineTracer->turnC(true,20,0);
-                    clock->sleep(2000); // wait a little
+                    clock->sleep(1000); // wait a little
                     lineTracer->turnC(true,10,0);
+                    b3_aa = 0; //念のため角度累積を初期化
+                    b_av = 0; //念のため前角速度を初期化
                     //ソナーを回転しを見つける
-                    for (int i = 0; i < 3000; i++){
-                        printf("dis_obj=%d\n",sonarSensor->getDistance());
-                        clock->sleep(10); // wait a little
-                        if(sonarSensor->getDistance() > 190 &&sonarSensor->getDistance() <250){
-                        //    clock->sleep(500); // wait a little
-                            lineTracer->freeze();
-                            clock->sleep(500); // wait a little
-                            lineTracer->unfreeze();
-                            break;
-                        }
+                    for (int i = 0; i < 300000; i++){
+                        printf("dis_obj=%d,",sonarSensor->getDistance());
+                        // if(sonarSensor->getDistance() > 180 && sonarSensor->getDistance() <250){
+                        //     printf("物体を見つけた\n");
+                        //     //ソナーセンサーの放射角度20度を補正
+                        //     while(b3_aa < 20){
+                                 n_av=g_anglerVelocity;
+                                 b3_aa += calc_angle(n_av,b_av);
+                                 b_av = n_av;
+                                printf("b3_aa=%d,n_av=%d,b_av=%d\n",b3_aa,n_av,b_av);
+                                clock->sleep(10); // wait a little
+                        //     }
+                        //     lineTracer->freeze();
+                        //     clock->sleep(500); // wait a little
+                        //     lineTracer->unfreeze();
+                        //     break;
+                        // }
                     }
                     lineTracer->turnC(true,30,30);
                     clock->sleep(10000); // wait a little

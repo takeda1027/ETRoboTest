@@ -305,6 +305,9 @@ private:
     LineTracer*     lineTracer;
     SeesawCrimber*  seesawCrimber;
     LimboDancer*    limboDancer;
+    int16_t b_av = 0; //sano
+    int16_t n_av = 0;//sano
+    float b3_aa = 0; //sano
 protected:
 public:
     Captain();

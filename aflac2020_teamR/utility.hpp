@@ -156,4 +156,7 @@ public:
     ~OutlierTester();
 };
 
+//sano 角度計算
+float calc_angle(int16_t angularVel,int16_t b_angularVel);
+
 #endif /* utility_hpp */
