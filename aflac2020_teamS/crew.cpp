@@ -779,6 +779,7 @@ void Captain::decide(uint8_t event) {
                     lineTracer->turnC(true,10,0);
                     b3_aa = 0; //念のため角度累積を初期化
                     b_av = 0; //念のため前角速度を初期化
+                    n_av = 0; //念のため前角速度を初期化
                     //ソナーを回転しを見つける
                     for (int i = 0; i < 300000; i++){
                         printf("dis_obj=%d,",sonarSensor->getDistance());
@@ -789,7 +790,7 @@ void Captain::decide(uint8_t event) {
                                  n_av=g_anglerVelocity;
                                  b3_aa += calc_angle(n_av,b_av);
                                  b_av = n_av;
-                                printf("b3_aa=%d,n_av=%d,b_av=%d\n",b3_aa,n_av,b_av);
+                                printf("b3_aa=%d,n_av=%d,b_av=%d,g_anglerVelocity=%d\n",b3_aa,n_av,b_av,g_anglerVelocity);
                                 clock->sleep(10); // wait a little
                         //     }
                         //     lineTracer->freeze();
