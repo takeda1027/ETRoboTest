@@ -1,0 +1,13 @@
+seesaw_angle_01,80
+seesaw_angle_02,75
+seesaw_angle_03,70
+seesaw_angle_04,65
+seesaw_angle_05,60
+seesaw_angle_06,55
+seesaw_angle_07,50
+seesaw_angle_08,45
+seesaw_angle_09,40
+seesaw_angle_10,35
+seesaw_angle_11,30
+seesaw_angle_12,25
+seesaw_angle_13,20
