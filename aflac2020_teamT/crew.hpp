@@ -206,14 +206,14 @@ private:
     bool check_lost(void);
     bool check_tilt(void);
 
-    bool b1 =false; //sano
-    bool b2 =false; //sano
-    bool b3 =false; //sano
-    bool slalom_flg=false; //sano
-    bool obj_flg=false; //sano
-    int a_dis = 99; //sano
-    int b_dis = 99; //sano
-    bool right_angle =false; //sano
+    int a_dis; //sano
+    int b_dis; //sano
+    bool b1; //sano
+    bool b2; //sano
+    bool b3; //sano
+    bool slalom_flg; //sano
+    bool obj_flg; //sano
+    bool right_angle; //sano
 
 
 

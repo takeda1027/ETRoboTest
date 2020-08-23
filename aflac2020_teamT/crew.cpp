@@ -16,6 +16,7 @@ int16_t g_grayScale, g_grayScaleBlueless;
 // global variables to gyro sensor output from Observer to  Navigator and its sub-classes
 int16_t g_angle, g_anglerVelocity;
 
+
 Radioman::Radioman() {
     _debug(syslog(LOG_NOTICE, "%08u, Radioman constructor", clock->now()));
     /* Open Bluetooth file */
@@ -86,6 +87,16 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, TouchSensor* ts, SonarSensor
     backButton_flag = false;
     lost_flag = false;
     blue_flag = false;
+    a_dis = 99; //sano
+    b_dis = 99; //sano
+    b1 =false; //sano
+    b2 =false; //sano
+    b3 =false; //sano
+    slalom_flg=false; //sano
+    obj_flg=false; //sano
+    right_angle =false; //sano
+    gyroSensor->setOffset(0);//sano
+
     //ot_r = new OutlierTester(OLT_SKIP_PERIOD/PERIOD_OBS_TSK, OLT_INIT_PERIOD/PERIOD_OBS_TSK);
     //ot_g = new OutlierTester(OLT_SKIP_PERIOD/PERIOD_OBS_TSK, OLT_INIT_PERIOD/PERIOD_OBS_TSK);
     //ot_b = new OutlierTester(OLT_SKIP_PERIOD/PERIOD_OBS_TSK, OLT_INIT_PERIOD/PERIOD_OBS_TSK);
@@ -774,12 +785,12 @@ void Captain::decide(uint8_t event) {
                     lineTracer->freeze();
                     clock->sleep(1000); // wait a little
                     lineTracer->unfreeze();
-                    lineTracer->turnC(true,20,0);
-                    clock->sleep(1000); // wait a little
-                    lineTracer->freeze();
-                    clock->sleep(1000); // wait a little
-                    lineTracer->unfreeze();
-                    lineTracer->turnC(true,10,0);
+                    //lineTracer->turnC(true,10,0);
+                    //clock->sleep(1000); // wait a little
+                    //lineTracer->freeze();
+                    //clock->sleep(1000); // wait a little
+                    //lineTracer->unfreeze();
+                    lineTracer->turnC(true,10,-10);
                     // b3_aa = 0; //念のため角度累積を初期化
                     // b_av = 0; //念のため前角速度を初期化
                     // n_av = 0; //念のため前角速度を初期化
@@ -790,8 +801,9 @@ void Captain::decide(uint8_t event) {
                         //     printf("物体を見つけた\n");
                         //     //ソナーセンサーの放射角度20度を補正
                         //     while(b3_aa < 20){
-                                 n_av = g_anglerVelocity;
+                                 n_av = gyroSensor->getAnglerVelocity();
                                  now_tim = clock->now();
+                                 printf("now_tim=%d,",now_tim);
                                  b3_aa += calc_angle(n_av,b_av,now_tim - before_tim);
                                  //printf("b3_aa=%lf,n_av=%d,now_tim=%d,",b3_aa,n_av,now_tim);
                                  b_av = n_av;
