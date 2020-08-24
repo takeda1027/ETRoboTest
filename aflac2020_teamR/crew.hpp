@@ -44,8 +44,9 @@ using namespace ev3api;
 // global variables
 extern rgb_raw_t g_rgb;
 extern hsv_raw_t g_hsv;
-extern int16_t g_grayScale, g_grayScaleBlueless;
+extern int16_t g_grayScale, g_grayScaleBlueless, test_mode;
 extern int16_t g_angle, g_anglerVelocity;
+extern bool b1, b2, b3, slalom_flg, angl_calc_flg, line_trace_flg; // sano
 
 /* 下記のマクロは個体/環境に合わせて変更する必要があります */
 #define GYRO_OFFSET           0  /* ジャイロセンサオフセット値(角速度0[deg/sec]時) */
@@ -209,7 +210,7 @@ public:
     int16_t getAzimuth();
     int32_t getLocX();
     int32_t getLocY();
-    double getAngle();
+    double getAccumAngleVl();
     void operate(); // method to invoke from the cyclic handler
     void goOffDuty();
     void freeze();

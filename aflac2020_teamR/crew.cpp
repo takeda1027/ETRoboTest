@@ -12,7 +12,7 @@
 // global variables to pass FIR-filtered color from Observer to Navigator and its sub-classes
 rgb_raw_t g_rgb;
 hsv_raw_t g_hsv;
-int16_t g_grayScale, g_grayScaleBlueless;
+int16_t g_grayScale, g_grayScaleBlueless, test_mode;
 bool b1, b2, b3, slalom_flg, angl_calc_flg, line_trace_flg;
 // global variables to gyro sensor output from Observer to  Navigator and its sub-classes
 int16_t g_angle, g_anglerVelocity;
@@ -75,10 +75,11 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, TouchSensor* ts, SonarSensor
 
     a_dis = 99; //sano
     b_dis = 99; //sano
+    test_mode = 1; // sanoテスト用
     b1 = false; // sano
-    b2 = false; // sano
+    b2 = false; // sano テスト用
     b3 = false; // sano
-    slalom_flg = false; // sano
+    slalom_flg = false; // sanoテスト用
     angl_calc_flg = false; // sano
     line_trace_flg = true;// sano
     obj_flg=false; //sano
@@ -130,8 +131,8 @@ int32_t Observer::getLocY() {
     return (int32_t)locY;
 }
 
-double Observer::getAngle() {
-    printf("b3_aabeforecaptain=%lf,curTime=%d\n,",b3_aa,curTime);
+double Observer::getAccumAngleVl() {
+    //printf("b3_aabeforecaptain=%lf,curTime=%d\n,",b3_aa,curTime);
     return b3_aa;
 }
 
@@ -196,11 +197,11 @@ void Observer::operate() {
         syslog(LOG_NOTICE, "%08u, TouchSensor flipped on", clock->now());
         touch_flag = true;
         captain->decide(EVT_touch_On);
-    } else if (!result && touch_flag) {
+    } else if (!result && touch_flag) { // sanoテスト用
         syslog(LOG_NOTICE, "%08u, TouchSensor flipped off", clock->now());
         touch_flag = false;
         captain->decide(EVT_touch_Off);
-    }
+     }
     
     // monitor sonar sensor
     // sanoコメントアウト
@@ -255,26 +256,32 @@ void Observer::operate() {
     if(b2 && !slalom_flg){
         b_dis=a_dis;
         a_dis=dis;
+        //printf(",b_dis=%d,a_dis=%d\n", b_dis,a_dis);
         if(a_dis>b_dis){
             slalom_flg=true;
             a_dis = 0;//初期化
             b_dis = 0;//初期化
-            state = ST_challenge_L;
-            printf("b3_aabeforecaptain=%lf,curTime=%d\n,",b3_aa,curTime);
-            captain->decide(EVT_slalom_on);
         }
     }
     
     //スラローム専用処理（駆動をゼロにするだけで現状上がりっぱなし。。。）
     if(slalom_flg){
+        if(state == ST_tracing_L){
+            state = ST_challenge_L;
+            //line_trace_flg = false;
+            //printf("b3_aabeforecaptain=%lf,curTime=%d\n,",b3_aa,curTime);
+            printf("スラロームON\n");
+            captain->decide(EVT_slalom_on);
+        }
         //captain->decide(EVT_slalom_go);
 
         //printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
     
         // 左下の直角カーブ対応
-        if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 100 && !right_angle){
+        if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 80 && !right_angle && line_trace_flg){
             right_angle=true;
             line_trace_flg = false;
+            printf("直角ターン\n");
             captain->decide(EVT_turnCnr); // ここで直角ターン
         }
         //車体の傾きでスラローム終了を検知
@@ -315,6 +322,7 @@ void Observer::goOffDuty() {
     //_debug(syslog(LOG_NOTICE, "%08u, Observer handler unset", clock->now()));
 }
 
+//sanoテスト用（スラロームから開始する）
 bool Observer::check_touch(void) {
     if (touchSensor->isPressed() && !b2 ){  //sano_t
         return true;
@@ -322,6 +330,14 @@ bool Observer::check_touch(void) {
         return false;
     }
 }
+
+// bool Observer::check_touch(void) {
+//     if (touchSensor->isPressed()){  //sano_t
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 bool Observer::check_sonar(void) {
     int32_t distance = sonarSensor->getDistance();
@@ -445,9 +461,9 @@ void LineTracer::operate() {
         leftMotor->setPWM(pwm_L);
         rightMotor->setPWM(pwm_R);
 
-        // if(b2){
-        //     printf(",pwm_L = %d, pwm_R = %d,turn=%d, b2=%d, slalom_flg=%d\n", pwm_L, pwm_R,turn, b2, slalom_flg); //sano
-        // }
+         if(slalom_flg){
+             //printf(",pwm_L = %d, pwm_R = %d,turn=%d, b2=%d, slalom_flg=%d\n", pwm_L, pwm_R,turn, b2, slalom_flg); //sano
+         }
         if(b2 && !slalom_flg && turn == 0 && !angl_calc_flg){
             angl_calc_flg = true;
         }
@@ -485,6 +501,7 @@ void ChallengeRunner::haveControl() {
 }
 
 void ChallengeRunner::operate() {
+
     if (!line_trace_flg){
         if (frozen) {
             pwm_L = 0;
@@ -496,6 +513,7 @@ void ChallengeRunner::operate() {
         leftMotor->setPWM(pwm_L);
         rightMotor->setPWM(pwm_R);
     } else {
+        //printf("ライントレース\n");
         if (frozen) {
             forward = turn = 0; /* 障害物を検知したら停止 */
         } else{
@@ -511,7 +529,6 @@ void ChallengeRunner::operate() {
                 turn = (-1) * ltPid->compute(sensor, target);
             }
         }
-        printf("pwm_L=%d, pwm_R=%d, forward=%d\n", pwm_L,pwm_R,forward);
         /* 左右モータでロボットのステアリング操作を行う */
         pwm_L = forward - turn;
         pwm_R = forward + turn;
@@ -519,6 +536,7 @@ void ChallengeRunner::operate() {
         leftMotor->setPWM(pwm_L);
         rightMotor->setPWM(pwm_R);
     }
+    printf("pwm_L=%d, pwm_R=%d, forward=%d\n", pwm_L,pwm_R,forward);
 }
 
 //　直角ターン用　左右の車輪に駆動にそれぞれ値を指定する sano
@@ -656,47 +674,39 @@ void Captain::decide(uint8_t event) {
         case ST_challenge_L:
             switch (event) {
                 case EVT_slalom_on:
+                    clock->sleep(850);
                     challengeRuuner->haveControl();
-                    printf("プル=%d\n", observer->getAngle());
                     armMotor->setPWM(0);
-                    clock->sleep(750);
-                    challengeRuuner->setSpeed(40);
                     challengeRuuner->freeze();
                     clock->sleep(3000); // wait a little
-                    printf("angle6=%d\n", observer->getAngle());
+                    //printf("AccumAnglerVelocity=%d\n", observer->getAccumAngleVl());
+                    challengeRuuner->setPwmLR(-10,10);
+                    challengeRuuner->unfreeze();
+                    for (int i = 0; i < 300000; i++){
+                        clock->sleep(10); // wait a little
+                        //printf("distance=%d\n", sonarSensor->getDistance());
+                        if(sonarSensor->getDistance() < 30){
+                            break;
+                        }
+                    }
+                    // if (observer->getAccumAngleVl() > 0){
+                    //     printf("右\n");
+                    //     challengeRuuner->setPwmLR(-10,10);
+                    // } else{
+                    //     printf("左\n");
+                    //     challengeRuuner->setPwmLR(10,-10);
+                    // }
+                    // while (observer->getAccumAngleVl() != 0){
+                    //     printf("accumAngleVL=%d\n",observer->getAccumAngleVl());
+                    //     clock->sleep(10); // wait a little
+                    // }
+                    printf("方向修正完了\n");
+                    challengeRuuner->freeze();
+                    clock->sleep(5000); // wait a little
                     challengeRuuner->unfreeze();
                     break;
                 case EVT_slalom_go:
-                    // challengeRuuner->freeze();
-                    // clock->sleep(5000); // wait a little
-                    // challengeRuuner->unfreeze();
-                    // challengeRuuner->setPwmLR(0,10);
-                    // while (sonarSensor->getDistance() < 25){
-                    //     printf("dis_obj=%d\n",sonarSensor->getDistance());
-                    //     clock->sleep(10); // wait a little
-                    // }
-                    // challengeRuuner->freeze();
-                    // printf("止まります1\n");
-                    // clock->sleep(5000); // wait a little
-                    // challengeRuuner->unfreeze();
-                    // challengeRuuner->setPwmLR(10,-10);
-                    // while (sonarSensor->getDistance() > 30){
-                    //     printf("dis_obj=%d\n",sonarSensor->getDistance());
-                    //     clock->sleep(10); // wait a little
-                    // }
-                    // challengeRuuner->freeze();
-                    // printf("止まります2\n");
-                    // clock->sleep(5000); // wait a little
-                    // challengeRuuner->unfreeze();
-                    // challengeRuuner->setPwmLR(10,10);
-                    // while (sonarSensor->getDistance() > 10){
-                    //     printf("dis_obj=%d\n",sonarSensor->getDistance());
-                    //     clock->sleep(10); // wait a little
-                    // }
-                    // challengeRuuner->freeze();
-                    // printf("止まります3\n");
-                    // clock->sleep(5000); // wait a little
-                    // challengeRuuner->unfreeze();
+
                     break;
                 case EVT_turnCnr:
                     challengeRuuner->freeze();
@@ -722,14 +732,14 @@ void Captain::decide(uint8_t event) {
                     challengeRuuner->setPwmLR(10,-10);
                     //ソナーを回転しを見つける
                     for (int i = 0; i < 300000; i++){
-                        printf("dis_obj=%d,",sonarSensor->getDistance());
+                        //printf("dis_obj=%d,",sonarSensor->getDistance());
                         // if(sonarSensor->getDistance() > 180 && sonarSensor->getDistance() <250){
                         //     printf("物体を見つけた\n");
                         //     //ソナーセンサーの放射角度20度を補正
                         //     while(b3_aa < 20){
                                  n_av = gyroSensor->getAnglerVelocity();
                                  curTime = clock->now();
-                                 printf("curTime=%d,",curTime);
+                                 //printf("curTime=%d,",curTime);
                                  b3_aa += calc_angle(n_av,b_av,curTime - prevTime);
                                  //printf("b3_aa=%lf,n_av=%d,curTime=%d,",b3_aa,n_av,curTime);
                                  b_av = n_av;
