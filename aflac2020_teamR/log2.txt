@@ -1,0 +1,995 @@
+invoker make app=aflac2020_teamR sim up
+rm -rf /home/ss55/etrobo/hrp3/sdk/workspace/.././OBJ/
+Generating Makefile from ../common/Makefile.app.
+make[1]: Entering directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+rm -f cfg1_out cfg1_out.o cfg1_out.c cfg1_out.syms cfg1_out.srec module_cfg.h module_cfg.c \#* *~ *.o
+make[1]: Leaving directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+make[1]: Entering directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+  CFG[1]  module_cfg.h
+[cfg.rb] Generated cfg1_out.c
+  CFG[2]  module_cfg.h
+[cfg.rb] Generated module_cfg.c
+[cfg.rb] Generated module_cfg.h
+make[1]: Leaving directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+make[1]: Entering directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+  CC      module_cfg.c
+  CC      ../../library/t_perror.c
+  CC      ../../library/strerror.c
+  CC      ../../library/vasyslog.c
+  CC      ../../target/ev3_gcc/TLSF-2.4.6/src/tlsf.c
+  CC      ../common/ev3api/src/ev3api.c
+  CC      ../common/ev3api/src/ev3api_brick.c
+  CC      ../common/ev3api/src/ev3api_battery.c
+  CC      ../common/ev3api/src/ev3api_fs.c
+  CC      ../common/ev3api/src/ev3api_speaker.c
+  CC      ../common/ev3api/src/ev3api_lcd.c
+  CC      ../common/ev3api/src/ev3api_motor.c
+  CC      ../common/ev3api/src/ev3api_newlib.c
+  CC      ../common/ev3api/src/ev3api_sensor.c
+  CXX     ../workspace/aflac2020_teamR/crew.cpp
+  CXX     ../workspace/aflac2020_teamR/SeesawCrimber.cpp
+  CXX     ../workspace/aflac2020_teamR/LimboDancer.cpp
+  CXX     ../workspace/aflac2020_teamR/utility.cpp
+  CXX     ../workspace/aflac2020_teamR/app.cpp
+  LD      app
+make[1]: Leaving directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+fakemake on HRP3: build succseed: aflac2020_teamR
+rm -rf /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ/
+cd /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ/ && \
+ruby /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/../../configure.rb  -T v850_gcc -A app \
+	-a ../workspace/aflac2020_teamR \
+	-D ../.. \
+	-l c++ \
+	-m ../common/Makefile.img \
+	-o "" \
+	-t \
+	-d ./dep \
+	-C ../common/athrill_common.cdl \
+	-U "" && \
+make clean
+Generating Makefile from ../common/Makefile.img.
+make[1]: Entering directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+rm -f \#* *~ ./*.o ./dep/*.d  check.timestamp
+rm -f asp asp.syms asp.srec asp.bin
+rm -f kernel_opt.timestamp   cfg3_out.db
+rm -f cfg3_out.syms cfg3_out.srec 
+rm -f kernel_cfg.timestamp kernel_cfg.h kernel_cfg.c   cfg2_out.db
+rm -f cfg2_out.syms cfg2_out.srec kernel_cfg_asm.S 
+rm -f offset.timestamp offset.h
+rm -f cfg1_out.syms cfg1_out.srec cfg1_out
+rm -f cfg1_out.timestamp cfg1_out.c cfg1_out.db
+rm -rf ./gen
+rm -f libkernel.a
+make[1]: Leaving directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+# -S "banner.o syslog.o serial.o logtask.o" 
+(cd /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ/ && \
+make offset.h kernel_cfg.h && \
+make -j8 > /dev/null ) && \
+cp /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ//asp /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace && \
+echo "/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/aflac2020_teamR" > /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/appdir
+make[1]: Entering directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+if grep -sq  "tecsgen.cfg" ../workspace/aflac2020_teamR/app.cfg ; then \
+	cat ../workspace/aflac2020_teamR/app.cfg > tmp_app.cfg ; \
+else \
+	echo "INCLUDE(\"tecsgen.cfg\")" >> tmp_app.cfg; \
+	cat ../workspace/aflac2020_teamR/app.cfg >> tmp_app.cfg ; \
+fi; 
+ruby ../../tecsgen/tecsgen.rb ../common/athrill_common.cdl -R -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include --cpp "v850-elf-gcc -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include  -D TECSGEN -E" -g ./gen
+ruby ../../cfg/cfg.rb --pass 1 --kernel asp -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include --api-table ../../kernel/kernel_api.def --symval-table ../../kernel/kernel_sym.def  --symval-table ../../target/v850_gcc/target_sym.def --api-table ../common/ev3api/ev3api.csv \
+					-M ./dep/cfg1_out_c.d ../../target/v850_gcc/target_kernel.cfg tmp_app.cfg
+[cfg.rb] Generated cfg1_out.c
+v850-elf-gcc -c -O2 -Wall -g   -mv850e2v3 -mdisable-callt -mhard-float -DMAKE_SIM -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -DALLFUNC  -I../../kernel ../../arch/v850_gcc/start.S
+v850-elf-gcc -c -O2 -Wall -g   -mv850e2v3 -mdisable-callt -mhard-float -DMAKE_SIM -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -DALLFUNC  -I../../kernel ../../arch/v850_gcc/v850_mul.S
+v850-elf-g++ -O2 -Wall -g   -mv850e2v3 -mdisable-callt -mhard-float -DMAKE_SIM -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -L . -nostdlib -nostartfiles -lgcc -lc    -nostdlib -Wl,-T,../../target/v850_gcc/v850es_fk3.ld -o cfg1_out \
+					start.o v850_mul.o  ./cfg1_out.o  -lstdc++ -lm -lc -lgcc -std=c++11  
+ruby ../../cfg/cfg.rb --pass 2 -O --kernel asp -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -T ../../target/v850_gcc/target_offset.trb \
+			--rom-symbol cfg1_out.syms --rom-image cfg1_out.srec
+[cfg.rb] Generated offset.h
+ruby ../../cfg/cfg.rb --pass 2 --kernel asp -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -T ../../target/v850_gcc/target_kernel.trb
+[cfg.rb] Generated kernel_cfg.h
+[cfg.rb] Generated kernel_cfg.c
+[cfg.rb] Generated kernel_cfg_asm.S
+make[1]: Leaving directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+fakemake on ASP3: build succseed: aflac2020_teamR.asp
+launch sim
+core id num=1
+ROM : START=0x0 SIZE=512
+RAM : START=0x200000 SIZE=512
+RAM : START=0x5ff7000 SIZE=10240
+RAM : START=0x7ff7000 SIZE=10240
+ELF SET CACHE RIGION:addr=0x0 size=180 [KB]
+Elf loading was succeeded:0x0 - 0x2d150 : 180.336 KB
+Elf loading was succeeded:0x2d150 - 0x2d6f0 : 1.416 KB
+ELF SYMBOL SECTION LOADED:index=106
+ELF SYMBOL SECTION LOADED:sym_num=1695
+ELF STRING TABLE SECTION LOADED:index=107
+DEBUG_FUNC_VDEV_TX_IPADDR = 127.0.0.1
+VDEV:TX IPADDR=127.0.0.1
+VDEV:TX PORTNO=54001
+VDEV:RX IPADDR=127.0.0.1
+VDEV:RX PORTNO=54002
+DEVICE_CONFIG_COMPLEMENTAL_TX_SENDING=1
+DEVICE_CONFIG_RESET_AREA_OFFSET=68
+DEVICE_CONFIG_RESET_AREA_SIZE=20
+DEBUG_FUNC_FT_LOG_SIZE=1024
+athrill_device_func_call=0x200594
+
+TOPPERS/ASP3 Kernel Release 3.2.0 for V850-ESFK3 (Aug 25 2020, 18:21:26)
+Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
+                            Toyohashi Univ. of Technology, JAPAN
+Copyright (C) 2004-2017 by Embedded and Real-Time Systems Laboratory
+            Graduate School of Information Science, Nagoya Univ., JAPAN
+
+brick_dri initialized.
+   _____   ______ ___  ______
+  / __/ | / /_  // _ \/_  __/
+ / _/ | |/ //_ </ , _/ / /
+/___/ |___/____/_/|_| /_/
+ 
+====================>Beta 7<=
+ 
+Powered by TOPPERS/ASP3 RTOS of Hakoniwa
+Initialization is completed..
+System logging task is started.
+DEVICE_CONFIG_BT_BASENAME = __ev3rt_bt
+DEVICE_CONFIG_VIRTFS_TOP = __ev3rtfs
+00000001, Captain default constructor
+00000003, Radioman constructor
+00000013, Calibrator default constructor
+00000025, Observer constructor
+00002034, Observer handler set
+00002036, Navigator default constructor
+00002039, LineTracer constructor
+00002041, LimboDancer constructor
+00002044, Navigator default constructor
+00002047, LineTracer constructor
+00002049, SeesawCrimber readProfile() file not found
+00002052, SeesawCrimber constructor
+00002054, Navigator default constructor
+00002057, LineTracer constructor
+00002060, Navigator default constructor
+00002063, LineTracer constructor
+00002065, ChallengeRunner constructor
+00002068, Navigator default constructor
+00002071, AnchorWatch constructor
+00004077, Navigator handler set
+00004078, AnchorWatch has control
+00004081, radioman task ready
+00560039, TouchSensor flipped on
+00560041, Captain::decide(): event EVT_touch_On received by state ST_takingOff
+00560043, Departing...
+00560047, LineTracer has control
+00560049, Departed
+00600039, TouchSensor flipped off
+00600041, Captain::decide(): event EVT_touch_Off received by state ST_tracing_L
+スラロームフラグ
+Degree=-9,r+g+b=179,r=54,g=53,b=72,right_angle=0
+48998113, Captain::decide(): event ST_stopping_R received by state ST_tracing_L
+48998116, ChallengeRunner has control
+Degree=-6,r+g+b=179,r=54,g=53,b=72,right_angle=0
+Degree=-5,r+g+b=179,r=54,g=53,b=72,right_angle=0
+Degree=-5,r+g+b=180,r=55,g=53,b=72,right_angle=0
+Degree=-5,r+g+b=180,r=55,g=53,b=72,right_angle=0
+Degree=-4,r+g+b=180,r=55,g=53,b=72,right_angle=0
+Degree=-4,r+g+b=181,r=56,g=53,b=72,right_angle=0
+Degree=-4,r+g+b=182,r=56,g=54,b=72,right_angle=0
+Degree=-4,r+g+b=183,r=57,g=54,b=72,right_angle=0
+Degree=-4,r+g+b=183,r=57,g=54,b=72,right_angle=0
+Degree=-4,r+g+b=182,r=57,g=54,b=71,right_angle=0
+Degree=-3,r+g+b=182,r=57,g=54,b=71,right_angle=0
+Degree=-3,r+g+b=182,r=57,g=54,b=71,right_angle=0
+Degree=-3,r+g+b=182,r=57,g=54,b=71,right_angle=0
+Degree=-3,r+g+b=184,r=58,g=55,b=71,right_angle=0
+Degree=-3,r+g+b=184,r=58,g=55,b=71,right_angle=0
+Degree=-3,r+g+b=183,r=58,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=183,r=58,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=183,r=58,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=185,r=59,g=55,b=71,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=185,r=60,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=185,r=60,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=185,r=60,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=186,r=61,g=56,b=69,right_angle=0
+Degree=-3,r+g+b=186,r=61,g=56,b=69,right_angle=0
+Degree=-3,r+g+b=186,r=61,g=56,b=69,right_angle=0
+Degree=-3,r+g+b=186,r=61,g=56,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=60,g=56,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=60,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=54,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=184,r=59,g=55,b=70,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=182,r=58,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=181,r=58,g=54,b=69,right_angle=0
+Degree=-3,r+g+b=180,r=58,g=54,b=68,right_angle=0
+Degree=-3,r+g+b=180,r=58,g=54,b=68,right_angle=0
+Degree=-3,r+g+b=180,r=58,g=54,b=68,right_angle=0
+Degree=-3,r+g+b=180,r=58,g=54,b=68,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=183,r=59,g=55,b=69,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=182,r=59,g=55,b=68,right_angle=0
+Degree=-3,r+g+b=181,r=59,g=54,b=68,right_angle=0
+Degree=-3,r+g+b=181,r=59,g=54,b=68,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=59,g=54,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=182,r=60,g=55,b=67,right_angle=0
+Degree=-3,r+g+b=180,r=60,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=180,r=60,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=180,r=60,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=180,r=60,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=180,r=60,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=180,r=60,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=179,r=59,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=179,r=59,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=179,r=59,g=54,b=66,right_angle=0
+Degree=-3,r+g+b=178,r=59,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=178,r=59,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=178,r=59,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=178,r=59,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=178,r=59,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=178,r=59,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=179,r=60,g=54,b=65,right_angle=0
+Degree=-3,r+g+b=178,r=60,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=178,r=60,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=178,r=60,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=178,r=60,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=177,r=59,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=177,r=59,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=177,r=59,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=177,r=59,g=54,b=64,right_angle=0
+Degree=-3,r+g+b=176,r=59,g=53,b=64,right_angle=0
+Degree=-3,r+g+b=175,r=59,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=175,r=59,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=175,r=59,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=175,r=59,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=175,r=59,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=176,r=60,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=177,r=60,g=54,b=63,right_angle=0
+Degree=-3,r+g+b=176,r=60,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=176,r=60,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=175,r=59,g=53,b=63,right_angle=0
+Degree=-3,r+g+b=174,r=59,g=53,b=62,right_angle=0
+Degree=-3,r+g+b=174,r=59,g=53,b=62,right_angle=0
+Degree=-3,r+g+b=174,r=59,g=53,b=62,right_angle=0
+Degree=-3,r+g+b=174,r=59,g=53,b=62,right_angle=0
+Degree=-3,r+g+b=174,r=59,g=53,b=62,right_angle=0
+Degree=-3,r+g+b=173,r=59,g=53,b=61,right_angle=0
+Degree=-3,r+g+b=172,r=59,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=172,r=59,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=172,r=59,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=172,r=59,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=171,r=58,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=171,r=58,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=171,r=58,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=171,r=58,g=52,b=61,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=170,r=58,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=171,r=59,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=171,r=59,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=171,r=59,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=171,r=59,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=171,r=59,g=52,b=60,right_angle=0
+Degree=-3,r+g+b=169,r=58,g=52,b=59,right_angle=0
+Degree=-3,r+g+b=169,r=58,g=52,b=59,right_angle=0
+Degree=-3,r+g+b=169,r=58,g=52,b=59,right_angle=0
+Degree=-3,r+g+b=168,r=58,g=51,b=59,right_angle=0
+Degree=-3,r+g+b=168,r=58,g=51,b=59,right_angle=0
+Degree=-3,r+g+b=168,r=58,g=51,b=59,right_angle=0
+Degree=-3,r+g+b=168,r=58,g=51,b=59,right_angle=0
+Degree=-3,r+g+b=167,r=58,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=167,r=58,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=167,r=58,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=166,r=57,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=166,r=57,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=166,r=57,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=166,r=57,g=51,b=58,right_angle=0
+Degree=-3,r+g+b=164,r=57,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=164,r=57,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=164,r=57,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=164,r=57,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=164,r=57,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=164,r=57,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=166,r=58,g=51,b=57,right_angle=0
+Degree=-3,r+g+b=165,r=58,g=50,b=57,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=163,r=57,g=50,b=56,right_angle=0
+Degree=-3,r+g+b=162,r=57,g=50,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=163,r=58,g=50,b=55,right_angle=0
+Degree=-3,r+g+b=163,r=58,g=50,b=55,right_angle=0
+Degree=-3,r+g+b=162,r=57,g=50,b=55,right_angle=0
+Degree=-3,r+g+b=162,r=57,g=50,b=55,right_angle=0
+Degree=-3,r+g+b=162,r=57,g=50,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=161,r=57,g=49,b=55,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=160,r=57,g=49,b=54,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=56,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=158,r=57,g=48,b=53,right_angle=0
+Degree=-3,r+g+b=157,r=57,g=48,b=52,right_angle=0
+Degree=-3,r+g+b=157,r=57,g=48,b=52,right_angle=0
+Degree=-3,r+g+b=156,r=56,g=48,b=52,right_angle=0
+Degree=-3,r+g+b=156,r=56,g=48,b=52,right_angle=0
+Degree=-3,r+g+b=156,r=56,g=48,b=52,right_angle=0
+Degree=-3,r+g+b=156,r=56,g=48,b=52,right_angle=0
+Degree=-3,r+g+b=155,r=56,g=48,b=51,right_angle=0
+Degree=-3,r+g+b=155,r=56,g=48,b=51,right_angle=0
+Degree=-3,r+g+b=155,r=56,g=48,b=51,right_angle=0
+Degree=-3,r+g+b=154,r=56,g=47,b=51,right_angle=0
+Degree=-3,r+g+b=154,r=56,g=47,b=51,right_angle=0
+Degree=-3,r+g+b=154,r=56,g=47,b=51,right_angle=0
+Degree=-3,r+g+b=154,r=56,g=47,b=51,right_angle=0
+Degree=-3,r+g+b=154,r=56,g=47,b=51,right_angle=0
+Degree=-3,r+g+b=154,r=56,g=47,b=51,right_angle=0
+Degree=-3,r+g+b=153,r=56,g=47,b=50,right_angle=0
+Degree=-3,r+g+b=152,r=55,g=47,b=50,right_angle=0
+Degree=-3,r+g+b=152,r=55,g=47,b=50,right_angle=0
+Degree=-3,r+g+b=152,r=55,g=47,b=50,right_angle=0
+Degree=-3,r+g+b=151,r=55,g=46,b=50,right_angle=0
+Degree=-3,r+g+b=151,r=55,g=46,b=50,right_angle=0
+Degree=-3,r+g+b=151,r=55,g=46,b=50,right_angle=0
+Degree=-3,r+g+b=153,r=56,g=47,b=50,right_angle=0
+Degree=-3,r+g+b=153,r=56,g=47,b=50,right_angle=0
+Degree=-3,r+g+b=152,r=56,g=47,b=49,right_angle=0
+Degree=-3,r+g+b=150,r=55,g=46,b=49,right_angle=0
+Degree=-3,r+g+b=150,r=55,g=46,b=49,right_angle=0
+Degree=-3,r+g+b=150,r=55,g=46,b=49,right_angle=0
+Degree=-3,r+g+b=150,r=55,g=46,b=49,right_angle=0
+Degree=-3,r+g+b=149,r=55,g=46,b=48,right_angle=0
+Degree=-3,r+g+b=149,r=55,g=46,b=48,right_angle=0
+Degree=-3,r+g+b=149,r=55,g=46,b=48,right_angle=0
+Degree=-3,r+g+b=149,r=55,g=46,b=48,right_angle=0
+Degree=-3,r+g+b=149,r=55,g=46,b=48,right_angle=0
+Degree=-3,r+g+b=148,r=55,g=45,b=48,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=146,r=54,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=147,r=55,g=45,b=47,right_angle=0
+Degree=-3,r+g+b=145,r=54,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=145,r=54,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=145,r=54,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=144,r=54,g=44,b=46,right_angle=0
+Degree=-3,r+g+b=144,r=54,g=44,b=46,right_angle=0
+Degree=-3,r+g+b=144,r=54,g=44,b=46,right_angle=0
+Degree=-3,r+g+b=144,r=54,g=44,b=46,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=143,r=54,g=44,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=55,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=148,r=56,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=148,r=56,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=148,r=56,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=148,r=56,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=148,r=56,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=147,r=56,g=45,b=46,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=57,g=46,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=147,r=57,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=145,r=56,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=143,r=55,g=44,b=44,right_angle=0
+Degree=-3,r+g+b=143,r=55,g=44,b=44,right_angle=0
+Degree=-3,r+g+b=143,r=55,g=44,b=44,right_angle=0
+Degree=-3,r+g+b=142,r=55,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=142,r=55,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=142,r=55,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=142,r=55,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=141,r=54,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=140,r=54,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=140,r=54,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=140,r=54,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=139,r=54,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=139,r=54,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=43,b=41,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=43,b=41,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=43,b=41,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=43,b=41,right_angle=0
+Degree=-3,r+g+b=136,r=53,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=136,r=53,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=136,r=53,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=134,r=52,g=42,b=40,right_angle=0
+Degree=-3,r+g+b=134,r=52,g=42,b=40,right_angle=0
+Degree=-3,r+g+b=134,r=52,g=42,b=40,right_angle=0
+Degree=-3,r+g+b=134,r=52,g=42,b=40,right_angle=0
+Degree=-3,r+g+b=134,r=52,g=42,b=40,right_angle=0
+Degree=-3,r+g+b=133,r=52,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=131,r=51,g=41,b=39,right_angle=0
+Degree=-3,r+g+b=131,r=51,g=41,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=127,r=49,g=40,b=38,right_angle=0
+Degree=-3,r+g+b=127,r=49,g=40,b=38,right_angle=0
+Degree=-3,r+g+b=127,r=49,g=40,b=38,right_angle=0
+Degree=-3,r+g+b=127,r=49,g=40,b=38,right_angle=0
+Degree=-3,r+g+b=127,r=49,g=40,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=126,r=49,g=39,b=38,right_angle=0
+Degree=-3,r+g+b=127,r=49,g=39,b=39,right_angle=0
+Degree=-3,r+g+b=128,r=49,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=128,r=49,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=128,r=49,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=128,r=49,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=129,r=50,g=40,b=39,right_angle=0
+Degree=-3,r+g+b=130,r=50,g=40,b=40,right_angle=0
+Degree=-3,r+g+b=130,r=50,g=40,b=40,right_angle=0
+Degree=-3,r+g+b=130,r=50,g=40,b=40,right_angle=0
+Degree=-3,r+g+b=130,r=50,g=40,b=40,right_angle=0
+Degree=-3,r+g+b=131,r=50,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=131,r=50,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=132,r=51,g=41,b=40,right_angle=0
+Degree=-3,r+g+b=133,r=51,g=41,b=41,right_angle=0
+Degree=-3,r+g+b=133,r=51,g=41,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=135,r=52,g=42,b=41,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=42,b=42,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=42,b=42,right_angle=0
+Degree=-3,r+g+b=137,r=53,g=42,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=138,r=53,g=43,b=42,right_angle=0
+Degree=-3,r+g+b=139,r=53,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=140,r=54,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=140,r=54,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=140,r=54,g=43,b=43,right_angle=0
+Degree=-3,r+g+b=141,r=54,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=141,r=54,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=141,r=54,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=141,r=54,g=44,b=43,right_angle=0
+Degree=-3,r+g+b=143,r=55,g=44,b=44,right_angle=0
+Degree=-3,r+g+b=143,r=55,g=44,b=44,right_angle=0
+Degree=-3,r+g+b=144,r=55,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=144,r=55,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=144,r=55,g=45,b=44,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=146,r=56,g=45,b=45,right_angle=0
+Degree=-3,r+g+b=148,r=56,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=149,r=57,g=46,b=46,right_angle=0
+Degree=-3,r+g+b=152,r=58,g=47,b=47,right_angle=0
+Degree=-3,r+g+b=152,r=58,g=47,b=47,right_angle=0
+Degree=-3,r+g+b=152,r=58,g=47,b=47,right_angle=0
+Degree=-3,r+g+b=154,r=59,g=47,b=48,right_angle=0
+Degree=-3,r+g+b=155,r=59,g=48,b=48,right_angle=0
+Degree=-3,r+g+b=155,r=59,g=48,b=48,right_angle=0
+Degree=-3,r+g+b=155,r=59,g=48,b=48,right_angle=0
+Degree=-3,r+g+b=155,r=59,g=48,b=48,right_angle=0
+Degree=-3,r+g+b=156,r=60,g=48,b=48,right_angle=0
+Degree=-3,r+g+b=156,r=60,g=48,b=48,right_angle=0
+Degree=-3,r+g+b=157,r=60,g=48,b=49,right_angle=0
+Degree=-3,r+g+b=158,r=60,g=49,b=49,right_angle=0
+Degree=-3,r+g+b=158,r=60,g=49,b=49,right_angle=0
+Degree=-3,r+g+b=158,r=60,g=49,b=49,right_angle=0
+Degree=-3,r+g+b=158,r=60,g=49,b=49,right_angle=0
+Degree=-3,r+g+b=160,r=61,g=49,b=50,right_angle=0
+Degree=-3,r+g+b=160,r=61,g=49,b=50,right_angle=0
+Degree=-3,r+g+b=160,r=61,g=49,b=50,right_angle=0
+Degree=-3,r+g+b=160,r=61,g=49,b=50,right_angle=0
+Degree=-3,r+g+b=161,r=61,g=50,b=50,right_angle=0
+Degree=-3,r+g+b=163,r=62,g=50,b=51,right_angle=0
+Degree=-3,r+g+b=163,r=62,g=50,b=51,right_angle=0
+Degree=-3,r+g+b=163,r=62,g=50,b=51,right_angle=0
+Degree=-3,r+g+b=163,r=62,g=50,b=51,right_angle=0
+Degree=-3,r+g+b=163,r=62,g=50,b=51,right_angle=0
+Degree=-3,r+g+b=165,r=62,g=51,b=52,right_angle=0
+Degree=-3,r+g+b=165,r=62,g=51,b=52,right_angle=0
+Degree=-3,r+g+b=166,r=63,g=51,b=52,right_angle=0
+Degree=-3,r+g+b=166,r=63,g=51,b=52,right_angle=0
+Degree=-3,r+g+b=167,r=64,g=51,b=52,right_angle=0
+Degree=-3,r+g+b=169,r=64,g=52,b=53,right_angle=0
+Degree=-3,r+g+b=169,r=64,g=52,b=53,right_angle=0
+Degree=-3,r+g+b=169,r=64,g=52,b=53,right_angle=0
+Degree=-3,r+g+b=169,r=64,g=52,b=53,right_angle=0
+Degree=-3,r+g+b=171,r=65,g=52,b=54,right_angle=0
+Degree=-3,r+g+b=171,r=65,g=52,b=54,right_angle=0
+Degree=-3,r+g+b=172,r=65,g=53,b=54,right_angle=0
+Degree=-3,r+g+b=172,r=65,g=53,b=54,right_angle=0
+Degree=-3,r+g+b=172,r=65,g=53,b=54,right_angle=0
+Degree=-3,r+g+b=172,r=65,g=53,b=54,right_angle=0
+Degree=-3,r+g+b=174,r=66,g=53,b=55,right_angle=0
+Degree=-3,r+g+b=174,r=66,g=53,b=55,right_angle=0
+Degree=-3,r+g+b=174,r=66,g=53,b=55,right_angle=0
+Degree=-3,r+g+b=175,r=66,g=54,b=55,right_angle=0
+Degree=-3,r+g+b=175,r=66,g=54,b=55,right_angle=0
+Degree=-3,r+g+b=175,r=66,g=54,b=55,right_angle=0
+Degree=-3,r+g+b=175,r=66,g=54,b=55,right_angle=0
+Degree=-3,r+g+b=177,r=67,g=54,b=56,right_angle=0
+Degree=-3,r+g+b=177,r=67,g=54,b=56,right_angle=0
+Degree=-3,r+g+b=178,r=67,g=55,b=56,right_angle=0
+Degree=-3,r+g+b=180,r=68,g=55,b=57,right_angle=0
+Degree=-3,r+g+b=179,r=67,g=55,b=57,right_angle=0
+Degree=-3,r+g+b=180,r=68,g=55,b=57,right_angle=0
+Degree=-3,r+g+b=180,r=68,g=55,b=57,right_angle=0
+Degree=-3,r+g+b=180,r=68,g=55,b=57,right_angle=0
+Degree=-3,r+g+b=181,r=68,g=56,b=57,right_angle=0
+Degree=-3,r+g+b=182,r=69,g=56,b=57,right_angle=0
+Degree=-3,r+g+b=183,r=69,g=56,b=58,right_angle=0
+Degree=-3,r+g+b=183,r=69,g=56,b=58,right_angle=0
+Degree=-3,r+g+b=183,r=69,g=56,b=58,right_angle=0
+Degree=-3,r+g+b=183,r=69,g=56,b=58,right_angle=0
+Degree=-3,r+g+b=185,r=70,g=57,b=58,right_angle=0
+Degree=-3,r+g+b=186,r=70,g=57,b=59,right_angle=0
+Degree=-3,r+g+b=186,r=70,g=57,b=59,right_angle=0
+Degree=-3,r+g+b=187,r=70,g=57,b=60,right_angle=0
+Degree=-3,r+g+b=188,r=70,g=58,b=60,right_angle=0
+Degree=-3,r+g+b=189,r=71,g=58,b=60,right_angle=0
+Degree=-3,r+g+b=189,r=71,g=58,b=60,right_angle=0
+Degree=-3,r+g+b=190,r=72,g=58,b=60,right_angle=0
+Degree=-3,r+g+b=190,r=72,g=58,b=60,right_angle=0
+Degree=-3,r+g+b=192,r=72,g=59,b=61,right_angle=0
+Degree=-3,r+g+b=192,r=72,g=59,b=61,right_angle=0
+Degree=-3,r+g+b=193,r=73,g=59,b=61,right_angle=0
+Degree=-3,r+g+b=193,r=73,g=59,b=61,right_angle=0
+Degree=-3,r+g+b=193,r=73,g=59,b=61,right_angle=0
+Degree=-3,r+g+b=195,r=73,g=60,b=62,right_angle=0
+Degree=-3,r+g+b=195,r=73,g=60,b=62,right_angle=0
+Degree=-3,r+g+b=196,r=74,g=60,b=62,right_angle=0
+Degree=-3,r+g+b=197,r=74,g=60,b=63,right_angle=0
+Degree=-3,r+g+b=198,r=74,g=61,b=63,right_angle=0
+Degree=-3,r+g+b=198,r=74,g=61,b=63,right_angle=0
+Degree=-3,r+g+b=199,r=75,g=61,b=63,right_angle=0
+Degree=-3,r+g+b=199,r=75,g=61,b=63,right_angle=0
+Degree=-3,r+g+b=199,r=75,g=61,b=63,right_angle=0
+Degree=-3,r+g+b=201,r=75,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=201,r=75,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=201,r=75,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=202,r=76,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=202,r=76,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=202,r=76,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=202,r=76,g=62,b=64,right_angle=0
+Degree=-3,r+g+b=203,r=76,g=63,b=64,right_angle=0
+Degree=-3,r+g+b=203,r=76,g=63,b=64,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=205,r=77,g=63,b=65,right_angle=0
+Degree=-3,r+g+b=207,r=78,g=64,b=65,right_angle=0
+Degree=-3,r+g+b=207,r=78,g=64,b=65,right_angle=0
+Degree=-3,r+g+b=207,r=78,g=64,b=65,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0
+Degree=-3,r+g+b=208,r=78,g=64,b=66,right_angle=0

@@ -123,6 +123,8 @@ const char stateName[][ST_NAME_LEN] = {
 #define EVT_turnb3          15
 #define EVT_slalom_on       16
 #define EVT_slalom_go       17
+#define EVT_goto_obstcl     18
+#define EVT_slalom_avoid    19
 #define EVT_NAME_LEN        20  // maximum number of characters for an event name
 const char eventName[][EVT_NAME_LEN] = {
     "EVT_cmdStart_L",
@@ -138,7 +140,7 @@ const char eventName[][EVT_NAME_LEN] = {
     "EVT_turnCnr",
     "EVT_turnb3"
     // "EVT_slalom_on",
-    // "EVT_slalom_go"
+    // "EVT_slalom_avoid"
 };
 
 // FIR filter parameters
@@ -170,6 +172,7 @@ private:
     Motor*          leftMotor;
     Motor*          rightMotor;
     Motor*          armMotor; //sano
+    Motor*          tailMotor; //sano
     TouchSensor*    touchSensor;
     SonarSensor*    sonarSensor;
     GyroSensor*     gyroSensor;
@@ -194,20 +197,21 @@ private:
     bool check_tilt(void);
 
     bool obj_flg; //sano
-    int a_dis; //sano
-    int b_dis; //sano
+    int curAngle; //sano
+    int prevAngle; //sano
     bool right_angle;//sano
 
 
 protected:
 public:
     Observer();
-    Observer(Motor* lm, Motor* rm, Motor* am, TouchSensor* ts, SonarSensor* ss, GyroSensor* gs, ColorSensor* cs);
+    Observer(Motor* lm, Motor* rm, Motor* am, Motor* tm, TouchSensor* ts, SonarSensor* ss, GyroSensor* gs, ColorSensor* cs);
     void goOnDuty();
     void reset();
     void notifyOfDistance(int32_t delta);
     int32_t getDistance();
     int16_t getAzimuth();
+    int16_t getDegree();
     int32_t getLocX();
     int32_t getLocY();
     double getAccumAngleVl();
