@@ -303,7 +303,7 @@ void Observer::operate() {
             slalom_flg=true;
             curAngle = 0;//初期化
             prevAngle = 0;//初期化
-            captain->decide(EVT_slalom_on);
+            captain->decide(EVT_slalom_On);
         }
     }
 
@@ -316,14 +316,13 @@ void Observer::operate() {
     if(slalom_flg){
 
         //captain->decide(EVT_slalom_avoid);
-        printf("Degree=%d\n", observer->getDegree());
         // printf("distance=%d", dis);
         // printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
     
-        // if ((getDegree() > 10 || getDegree() < -10) && obstcl_mode < 1){
-        //     //printf("Degree=%d\n", observer->getDegree());
-        //     captain->decide(EVT_goto_obstcl); // 
-        // }
+        if (check_sonar()){
+            //printf("Degree=%d\n", observer->getDegree());
+            captain->decide(EVT_sonar_On); // 
+        }
 
         // 左下の直角カーブ対応
         if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 80 && !right_angle && line_trace_flg){
@@ -395,7 +394,6 @@ void Observer::goOffDuty() {
 
 bool Observer::check_touch(void) {
     if (touchSensor->isPressed()){  //sano_t
-    printf("タッチ\n");
         return true;
     } else {
         return false;
@@ -702,7 +700,7 @@ void Captain::decide(uint8_t event) {
                 case EVT_sonar_Off:
                     //lineTracer->unfreeze();
                     break;
-                case EVT_slalom_on:
+                case EVT_slalom_On:
                     state = ST_challenge_R;
                     line_trace_flg = false;
                     armMotor->setPWM(0);
@@ -722,7 +720,7 @@ void Captain::decide(uint8_t event) {
                 case EVT_sonar_Off:
                     //lineTracer->unfreeze();
                     break;
-                case EVT_slalom_on:
+                case EVT_slalom_On:
                     state = ST_challenge_L;
                     line_trace_flg = false;
                     armMotor->setPWM(0);
@@ -755,13 +753,10 @@ void Captain::decide(uint8_t event) {
         break;
         case ST_challenge_L:
             switch (event) {
-                case EVT_goto_obstcl:
-                // printf("Degree=%d\n", observer->getDegree());
-                //     if (observer->getDegree() > 0){
-                //         challengeRuuner->setPwmLR(0,0);
-                //     }else {
-                //         challengeRuuner->setPwmLR(0,0);
-                //     }
+                case EVT_sonar_On:
+                    challengeRuuner->freeze();
+                    clock->sleep(5000);
+                    challengeRuuner->unfreeze();
                     break;
                 case EVT_slalom_go:
                     // challengeRuuner->setPwmLR(10,10);

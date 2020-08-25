@@ -121,9 +121,9 @@ const char stateName[][ST_NAME_LEN] = {
 #define EVT_tilt            13
 #define EVT_turnCnr         14
 #define EVT_turnb3          15
-#define EVT_slalom_on       16
-#define EVT_slalom_go       17
-#define EVT_goto_obstcl     18
+#define EVT_slalom_On       16
+#define EVT_slalom_Off      17
+#define EVT_slalom_go       18
 #define EVT_slalom_avoid    19
 #define EVT_NAME_LEN        20  // maximum number of characters for an event name
 const char eventName[][EVT_NAME_LEN] = {
@@ -139,7 +139,7 @@ const char eventName[][EVT_NAME_LEN] = {
     "EVT_tilt",
     "EVT_turnCnr",
     "EVT_turnb3"
-    // "EVT_slalom_on",
+    // "EVT_slalom_On",
     // "EVT_slalom_avoid"
 };
 
