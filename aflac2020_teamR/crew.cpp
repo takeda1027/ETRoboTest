@@ -612,7 +612,6 @@ LineTracer::~LineTracer() {
 
 ChallengeRunner::ChallengeRunner(Motor* lm, Motor* rm, Motor* tm) : LineTracer(lm, rm, tm){
     _debug(syslog(LOG_NOTICE, "%08u, ChallengeRunner constructor", clock->now()));
-    steering    = new Steering(*leftMotor, *rightMotor);
     leftMotor   = lm;
     rightMotor  = rm;
     pwm_L = 20;
@@ -693,11 +692,6 @@ void ChallengeRunner::setPwmLR(int p_L,int p_R,int mode,int proc_count) {
     count = 0;
 }
 
-//　ステアリング操作を行う
-void ChallengeRunner::setPower(int 	power, int 	turnRatio) {
-    steering->setPower(power, turnRatio);
-}
-
 int8_t ChallengeRunner::getPwmL() {
     return pwm_L;
 }
@@ -724,7 +718,6 @@ void Captain::takeoff() {
     rightMotor  = new Motor(PORT_B);
     tailMotor   = new Motor(PORT_D); // sano
     armMotor   = new Motor(PORT_A); //sano
-    steering    = new Steering(*leftMotor, *rightMotor);
     
     /* LCD画面表示 */
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
