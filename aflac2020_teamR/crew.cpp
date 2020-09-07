@@ -276,7 +276,7 @@ void Observer::operate() {
 
     //sano：開始
     //障害物との距離=>アーム上げのタイミング判定に利用
-     int32_t sonarDistance = sonarSensor->getDistance();
+    int32_t sonarDistance = sonarSensor->getDistance();
  
     //ブルー１個目の判断 前方何もなし、ラインブルーの場合(スタート地点でなぜか処理に入ってしまうためcur_rgb.b <=255を追加)
     if( cur_rgb.b - cur_rgb.r > 60 && !b1 && sonarDistance > 250 && cur_rgb.b <=255 && cur_rgb.r<=255){
@@ -295,7 +295,6 @@ void Observer::operate() {
         //printf(",distance=%d, d=%d, degree=%d, challenge_stepNo=%d, b2=%d, moveBack_flg=%d, slalom_flg=%d\n", sonarDistance,getDistance(), degree, challenge_stepNo,b2,moveBack_flg  ,slalom_flg);
         //printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
         if (sonarDistance >= 1 && sonarDistance <= 10 && !moveBack_flg){
-            printf("アーム下げる\n");
             captain->decide(EVT_slalom_reached);
             moveBack_flg = true;
         }
@@ -306,21 +305,14 @@ void Observer::operate() {
             process_count += 1;
         }
 
-        // しっぽでちょこんと支えて登る
         int16_t curAngle = g_angle;
-        // if(curAngle < -3 && process_count <= 1){
-        //     printf("しっぽ上げる, process_count=%d\n", process_count);
-        //     tailMotor->setPWM(10);
-        //     process_count += 1;
-        // }
+
         if(curAngle < -9){
-            //printf("しっぽ上げる\n");
             prevAngle = curAngle;
-            //tailMotor->setPWM(30);
         }
         if (prevAngle < -9 && curAngle >= 0){
             printf("スラロームオン\n");
-            slalom_flg=true;
+            slalom_flg = true;
             curAngle = 0;//初期化
             prevAngle = 0;//初期化
             distance = 0;//初期化
@@ -329,7 +321,6 @@ void Observer::operate() {
     }
     
     //スラローム専用処理
-    //printf("g_angle=%d\n", g_angle);
     if(slalom_flg){
 
         if ((challenge_stepNo >= 13 && challenge_stepNo <= 13) || (challenge_stepNo >= 10 && challenge_stepNo <= 12)){
@@ -346,11 +337,10 @@ void Observer::operate() {
             captain->decide(EVT_obstcl_reached);
          // １つ目の障害物に接近する
         }else if(challenge_stepNo == 1 && check_sonar(50,255)){
-        // }else if(challenge_stepNo == 1 && sonarDistance > 45 && sonarDistance < 55){
-             printf(",１つ目の障害物を回避する\n");
-               captain->decide(EVT_obstcl_avoidable);
-               prevRgbSum = curRgbSum;
-               line_over_flg = false;
+            printf(",１つ目の障害物を回避する\n");
+            captain->decide(EVT_obstcl_avoidable);
+            prevRgbSum = curRgbSum;
+            line_over_flg = false;
         // 黒ラインを超えるまで前進し、超えたら向きを調整する
         }else if (challenge_stepNo == 2 && !line_over_flg){
         //     //printf(",curRgb=%d, prevRgb=%d\n",curRgbSum,prevRgbSum);
@@ -405,7 +395,7 @@ void Observer::operate() {
             if (curRgbSum < 100) {
                 prevRgbSum = curRgbSum;
             }
-            if(prevRgbSum < 100 && curRgbSum > 160){
+            if(prevRgbSum < 100 && curRgbSum > 150){
                 printf(",黒ラインを超えたら向きを調整し障害物に接近する\n");
                 captain->decide(EVT_obstcl_angle);
                 line_over_flg = true;
@@ -424,20 +414,6 @@ void Observer::operate() {
             captain->decide(EVT_obstcl_avoidable);
         }
 
-
-        // // ロストしたら元に戻す（adjust_flgで制御）
-        // if (challenge_stepNo == 0 && curRgbSum < 170 && !adjust_flg){
-        //     printf("ロスト検知（ラインの上）\n");
-        //     adjust_flg = true;
-        //     captain->decide(EVT_lost_on_the_line);
-        // }
-        // // 戻り確認
-        // if  (challenge_stepNo == 0 && curRgbSum > 180 && adjust_flg){
-        //     printf("元に戻す（ラインの上）\n");
-        //     adjust_flg = false;
-        //     captain->decide(EVT_slalom_On);
-        // }
-
         //printf("g_angle=%d\n");
          if(g_angle > 10 && challenge_stepNo > 2){
             printf("スラロームオフ\n");
@@ -451,9 +427,6 @@ void Observer::operate() {
         b3 = true;
         captain->decide(EVT_turnb3); // ソナー稼働回転、物体を見つけに行く
     }
-
-    //printf(",b-r=%d,r=%03u, g=%03u, b=%03u, b1=%d,b2=%d,slalom_flg=%d\n", g_rgb.b-g_rgb.r,g_rgb.r, g_rgb.g, g_rgb.b,b1,b2,slalom_flg);
-    //sano：終了
 
     // display trace message in every PERIOD_TRACE_MSG ms */
     if (++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) {
@@ -731,7 +704,6 @@ void ChallengeRunner::setPwmLR(int p_L,int p_R,int mode,int proc_count) {
     pwmMode = mode;
     procCount = proc_count;
     count = 0;
-    //printf(",pwm_p_L=%d, pwm_p_R=%d\n", pwm_p_L, pwm_p_R);
 }
 
 //　ステアリング操作を行う
@@ -867,20 +839,8 @@ void Captain::decide(uint8_t event) {
                     challengeRuuner->freeze();
                     clock->sleep(300);
                     challengeRuuner->unfreeze();
-                    // challengeRuuner->setPwmLR(40,-40,Mode_speed_constant,1);
-                    // clock->sleep(740);
-                    // challengeRuuner->setPwmLR(30,30,Mode_speed_constant,1);
-                    // clock->sleep(750);
-                    // challengeRuuner->setPwmLR(-40,40,Mode_speed_constant,1);
-                    // clock->sleep(755);
-                    // //armMotor->setPWM(-100);
-                    // challengeRuuner->setPwmLR(13,13,Mode_speed_constant,1);
-                    // clock->sleep(2000);
                     challengeRuuner->setPwmLR(-20,-20,Mode_speed_constant,1);
-                    for (int i = 0; i < 50; i++){
-                         clock->sleep(10);
-                    }
-                    //printf("distance=%d\n", sonarSensor->getDistance());
+                    clock->sleep(500);
                     challengeRuuner->freeze();
                     armMotor->setPWM(80);
                     clock->sleep(300);
@@ -963,7 +923,7 @@ void Captain::decide(uint8_t event) {
                         challengeRuuner->freeze();
                         clock->sleep(300);
                         challengeRuuner->unfreeze();
-                        challengeRuuner->setPwmLR(25,20,Mode_speed_decreaseL,150);
+                        challengeRuuner->setPwmLR(25,20,Mode_speed_decreaseL,140);
                         challenge_stepNo += 1;
                     }else if(challenge_stepNo == 10){
                         challengeRuuner->freeze();
