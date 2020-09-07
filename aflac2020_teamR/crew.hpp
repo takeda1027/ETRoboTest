@@ -46,7 +46,7 @@ extern rgb_raw_t g_rgb;
 extern hsv_raw_t g_hsv;
 extern int16_t g_grayScale, g_grayScaleBlueless, test_mode;
 extern int16_t g_angle, g_anglerVelocity;
-extern bool b1, b2, b3, slalom_flg, angl_calc_flg, line_trace_flg; // sano
+extern bool b1, b2, b3, slalom_flg; // sano
 
 /* 下記のマクロは個体/環境に合わせて変更する必要があります */
 #define GYRO_OFFSET           0  /* ジャイロセンサオフセット値(角速度0[deg/sec]時) */
@@ -196,9 +196,9 @@ private:
     ColorSensor*    colorSensor;
     double distance, runDistance, azimuth, locX, locY, sonarDistance;
     int8_t process_count;
-    int16_t traceCnt, prevGS, curRgbSum, prevRgbSum, runDegree;
+    int16_t traceCnt, prevGS, curRgbSum, prevRgbSum;
     int32_t prevAngL, prevAngR, notifyDistance, gsDiff, timeDiff;
-    bool touch_flag, sonar_flag, lost_flag, frozen, blue_flag, line_over_flg, adjust_flg;
+    bool touch_flag, sonar_flag, lost_flag, frozen, line_over_flg, moveBack_flg, adjust_flg;
 
     rgb_raw_t cur_rgb;
     hsv_raw_t cur_hsv;
@@ -289,7 +289,6 @@ public:
 
 class ChallengeRunner : public LineTracer {
 private:
-    Steering*       steering;
     int8_t pwmMode;
     int16_t count, procCount, traceCnt;
 protected:
