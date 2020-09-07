@@ -156,7 +156,4 @@ public:
     ~OutlierTester();
 };
 
-//sano 角度計算 引数：現在の角速度、前時間の角速度、時間差
-double calc_angle(int16_t angularVel,int16_t b_angularVel,uint16_t d_tim);
-
 #endif /* utility_hpp */

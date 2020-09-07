@@ -121,11 +121,18 @@ const char stateName[][ST_NAME_LEN] = {
 #define EVT_tilt            13
 #define EVT_turnCnr         14
 #define EVT_turnb3          15
-#define EVT_slalom_on       16
-#define EVT_slalom_go       17
-#define EVT_goto_obstcl     18
-#define EVT_slalom_avoid    19
-#define EVT_NAME_LEN        20  // maximum number of characters for an event name
+#define EVT_slalom_reached  16
+#define EVT_slalom_On       17
+#define EVT_slalom_Off      18
+#define EVT_obstcl_unkown   19
+#define EVT_obstcl_detect   20
+#define EVT_obstcl_angle    21
+#define EVT_obstcl_infront  22
+#define EVT_obstcl_reached  23
+#define EVT_obstcl_avoidable 24
+#define EVT_lost_on_the_line 25
+#define EVT_lost_on_the_edge 26
+#define EVT_NAME_LEN        25  // maximum number of characters for an event name
 const char eventName[][EVT_NAME_LEN] = {
     "EVT_cmdStart_L",
     "EVT_cmdStart_R",
@@ -139,9 +146,19 @@ const char eventName[][EVT_NAME_LEN] = {
     "EVT_tilt",
     "EVT_turnCnr",
     "EVT_turnb3"
-    // "EVT_slalom_on",
-    // "EVT_slalom_avoid"
+
 };
+
+// pwmMode
+#define Mode_speed_constant     1
+#define Mode_speed_increaseL    2
+#define Mode_speed_decreaseL    3
+#define Mode_speed_increaseR    4
+#define Mode_speed_decreaseR    5
+#define Mode_speed_increaseLR   6
+#define Mode_speed_decreaseLR   7
+#define Mode_speed_incrsLdcrsR  8
+#define Mode_speed_incrsRdcrsL  9
 
 // FIR filter parameters
 const int FIR_ORDER = 10;
@@ -177,11 +194,11 @@ private:
     SonarSensor*    sonarSensor;
     GyroSensor*     gyroSensor;
     ColorSensor*    colorSensor;
-    double distance, azimuth, locX, locY, b3_aa;
-    int16_t traceCnt, prevGS, b_av, n_av;
+    double distance, runDistance, azimuth, locX, locY, sonarDistance;
+    int8_t process_count;
+    int16_t traceCnt, prevGS, curRgbSum, prevRgbSum, runDegree;
     int32_t prevAngL, prevAngR, notifyDistance, gsDiff, timeDiff;
-    uint64_t curTime, prevTime;
-    bool touch_flag, sonar_flag, lost_flag, frozen, blue_flag;
+    bool touch_flag, sonar_flag, lost_flag, frozen, blue_flag, line_over_flg, adjust_flg;
 
     rgb_raw_t cur_rgb;
     hsv_raw_t cur_hsv;
@@ -193,10 +210,10 @@ private:
 
     bool check_touch(void);
     bool check_sonar(void);
+    bool check_sonar(int16_t sonar_alert_dist_from, int16_t sonar_alert_dist_to);
     bool check_lost(void);
     bool check_tilt(void);
 
-    bool obj_flg; //sano
     int curAngle; //sano
     int prevAngle; //sano
     bool right_angle;//sano
@@ -210,11 +227,11 @@ public:
     void reset();
     void notifyOfDistance(int32_t delta);
     int32_t getDistance();
+    int32_t getSonarDistance();
     int16_t getAzimuth();
     int16_t getDegree();
     int32_t getLocX();
     int32_t getLocY();
-    double getAccumAngleVl();
     void operate(); // method to invoke from the cyclic handler
     void goOffDuty();
     void freeze();
@@ -260,8 +277,6 @@ private:
 protected:
 public:
     bool frozen;
-    int pwm_p_L; //sano
-    int pwm_p_R; //sano
     LineTracer();
     LineTracer(Motor* lm, Motor* rm, Motor* tm);
     void haveControl();
@@ -274,14 +289,19 @@ public:
 
 class ChallengeRunner : public LineTracer {
 private:
-
+    Steering*       steering;
+    int8_t pwmMode;
+    int16_t count, procCount, traceCnt;
 protected:
 public:
     ChallengeRunner();
     ChallengeRunner(Motor* lm, Motor* rm, Motor* tm);
     void haveControl();
     void operate(); // method to invoke from the cyclic handler
-    void setPwmLR(int p_L,int p_R);
+    void setPwmLR(int p_L,int p_R,int mode, int proc_count);
+    void setPower(int 	power, int 	turnRatio);
+    int8_t getPwmL();
+    int8_t getPwmR();
     ~ChallengeRunner();
 };
 
@@ -304,8 +324,6 @@ private:
     ChallengeRunner*   challengeRuuner; // sano
     SeesawCrimber*  seesawCrimber;
     LimboDancer*    limboDancer;
-    int16_t b_av, n_av;
-    double b3_aa;
     uint64_t curTime, prevTime;
 protected:
 public:

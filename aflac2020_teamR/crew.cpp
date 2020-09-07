@@ -12,8 +12,8 @@
 // global variables to pass FIR-filtered color from Observer to Navigator and its sub-classes
 rgb_raw_t g_rgb;
 hsv_raw_t g_hsv;
-int16_t g_grayScale, g_grayScaleBlueless, test_mode, obstcl_mode;
-bool b1, b2, b3, slalom_flg, angl_calc_flg, line_trace_flg;
+int16_t g_grayScale, g_grayScaleBlueless, test_mode, challenge_stepNo;
+bool b1, b2, b3, slalom_flg, angl_calc_flg, line_trace_flg, moveBack_flg;
 // global variables to gyro sensor output from Observer to  Navigator and its sub-classes
 int16_t g_angle, g_anglerVelocity;
 
@@ -60,10 +60,11 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, Motor* tm, TouchSensor* ts, 
     gyroSensor  = gs;
     colorSensor = cs;
     distance = 0.0;
+    runDistance = 0.0;
+    runDegree = 0;
     azimuth = 0.0;
     locX = 0.0;
     locY = 0.0;
-    b3_aa = 0.0;
     prevAngL = 0;
     prevAngR = 0;
     notifyDistance = 0;
@@ -73,18 +74,21 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, Motor* tm, TouchSensor* ts, 
     sonar_flag = false;
     lost_flag = false;
     blue_flag = false;
+    line_over_flg = false;
+    adjust_flg = false;
 
     curAngle = 0; //sano
     prevAngle = 0; //sano
     test_mode = 1; // sanoテスト用
-    obstcl_mode = 0; // sano
+    challenge_stepNo = 0; // sano
+
     b1 = false; // sano
-    b2 = false; // sano テスト用
+    b2 = true; // sano テスト用
     b3 = false; // sano
-    slalom_flg = false; // sanoテスト用
+    slalom_flg = false; // sano
     angl_calc_flg = false; // sano
     line_trace_flg = true;// sano
-    obj_flg=false; //sano
+    moveBack_flg= false; // sano
     right_angle =false;//sano
     gyroSensor->setOffset(0);//sano
 
@@ -92,6 +96,8 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, Motor* tm, TouchSensor* ts, 
     fir_g = new FIR_Transposed<FIR_ORDER>(hn);
     fir_b = new FIR_Transposed<FIR_ORDER>(hn);
     ma = new MovingAverage<int32_t, MA_CAP>();
+
+    process_count = 1; // sano
 }
 
 void Observer::goOnDuty() {
@@ -104,6 +110,8 @@ void Observer::goOnDuty() {
 
 void Observer::reset() {
     distance = 0.0;
+    runDistance = 0.0;
+    runDegree = 0;
     azimuth = 0.0;
     locX = 0.0;
     locY = 0.0;
@@ -117,6 +125,10 @@ void Observer::notifyOfDistance(int32_t delta) {
 
 int32_t Observer::getDistance() {
     return (int32_t)distance;
+}
+
+int32_t Observer::getSonarDistance() {
+    return (int32_t)sonarDistance;
 }
 
 int16_t Observer::getAzimuth() {
@@ -142,10 +154,6 @@ int32_t Observer::getLocY() {
     return (int32_t)locY;
 }
 
-double Observer::getAccumAngleVl() {
-    //printf("b3_aabeforecaptain=%lf,curTime=%d\n,",b3_aa,curTime);
-    return b3_aa;
-}
 
 void Observer::operate() {
     colorSensor->getRawColor(cur_rgb);
@@ -153,12 +161,14 @@ void Observer::operate() {
     cur_rgb.r = fir_r->Execute(cur_rgb.r);
     cur_rgb.g = fir_g->Execute(cur_rgb.g);
     cur_rgb.b = fir_b->Execute(cur_rgb.b);
+    curRgbSum = cur_rgb.r + cur_rgb.g + cur_rgb.b;
     rgb_to_hsv(cur_rgb, cur_hsv);
+
     // save filtered color variables to the global area
     g_rgb = cur_rgb;
     g_hsv = cur_hsv;
+
     // calculate gray scale and save them to the global area
- 
     //スラローム上では、茶色地面なので青、赤を逆転っぽく sano
     if(!slalom_flg){
         g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
@@ -206,7 +216,6 @@ void Observer::operate() {
             hoge = (hoge - 360) * 22 /30 + 360;
         }
         azimuth = hoge * M_2PI / 360.0;
-        printf("通っている\n");
     }
     float r = 0.0;
     r = 360.0 * azimuth/ M_2PI - 13 ;
@@ -237,15 +246,15 @@ void Observer::operate() {
     // monitor sonar sensor
     // sanoコメントアウト
     result = check_sonar();
-    if (result && !sonar_flag) {
-        syslog(LOG_NOTICE, "%08u, SonarSensor flipped on", clock->now());
-        sonar_flag = true;
-        captain->decide(EVT_sonar_On);
-    } else if (!result && sonar_flag) {
-        syslog(LOG_NOTICE, "%08u, SonarSensor flipped off", clock->now());
-        sonar_flag = false;
-        captain->decide(EVT_sonar_Off);
-    }
+    // if (result && !sonar_flag) {
+    //     syslog(LOG_NOTICE, "%08u, SonarSensor flipped on", clock->now());
+    //     sonar_flag = true;
+    //     //captain->decide(EVT_sonar_On);
+    // } else if (!result && sonar_flag) {
+    //     syslog(LOG_NOTICE, "%08u, SonarSensor flipped off", clock->now());
+    //     sonar_flag = false;
+    //     //captain->decide(EVT_sonar_Off);
+    // }
 
     // if (!frozen) { // these checks are meaningless thus bypassed when frozen
     //     // determine if still tracing the line
@@ -263,92 +272,177 @@ void Observer::operate() {
     // }
     
     // display trace message in every PERIOD_TRACE_MSG ms */
-    int32_t d = getDistance();
+    int16_t degree = getDegree();
 
     //sano：開始
-    //printf(",d=%d",d);
     //障害物との距離=>アーム上げのタイミング判定に利用
-     int32_t dis = sonarSensor->getDistance();
+     int32_t sonarDistance = sonarSensor->getDistance();
  
     //ブルー１個目の判断 前方何もなし、ラインブルーの場合(スタート地点でなぜか処理に入ってしまうためcur_rgb.b <=255を追加)
-    if( cur_rgb.b - cur_rgb.r > 60 && !b1 && dis > 250 && cur_rgb.b <=255 && cur_rgb.r<=255){
+    if( cur_rgb.b - cur_rgb.r > 60 && !b1 && sonarDistance > 250 && cur_rgb.b <=255 && cur_rgb.r<=255){
         b1 =true;
     }else if(b1 && cur_rgb.b - cur_rgb.r < 40){
         b1 = false; //１つめのブルー検知フラグを落とす
     }
 
     //b-r青判定、スラロームが近い（前方障害あり）、ブルー２個目b2フラグ立てる
-    if(cur_rgb.b - cur_rgb.r > 60 && dis < 50  && cur_rgb.b <=255 && cur_rgb.r<=255){
+    if(cur_rgb.b - cur_rgb.r > 60 && sonarDistance < 50  && cur_rgb.b <=255 && cur_rgb.r<=255){
         b2 =true;
-        armMotor->setPWM(20);
     }
 
     //スラローム判定
     if(b2 && !slalom_flg){
-        // if(dis < 10){
-        //     //armMotor->setPWM(20);
-        //     tailMotor->setPWM(50);
-        // }
-        //printf(",g_angle=%d\n", g_angle);
-        // if(check_touch()){
-        //     tailMotor->setPWM(100);
-        // }
-        curAngle = g_angle;
-        if(curAngle < -10){
-            tailMotor->setPWM(100);
-            prevAngle = curAngle;
+        //printf(",distance=%d, d=%d, degree=%d, challenge_stepNo=%d, b2=%d, moveBack_flg=%d, slalom_flg=%d\n", sonarDistance,getDistance(), degree, challenge_stepNo,b2,moveBack_flg  ,slalom_flg);
+        //printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
+        if (sonarDistance >= 1 && sonarDistance <= 10 && !moveBack_flg){
+            printf("アーム下げる\n");
+            captain->decide(EVT_slalom_reached);
+            moveBack_flg = true;
         }
-        if (prevAngle < -10 && curAngle >= 0){
-            printf("スラロームフラグ\n");
+
+        if (moveBack_flg && challenge_stepNo == 0 && sonarDistance <= 10 && process_count <= 1){
+            //printf("アーム上げる\n");
+            armMotor->setPWM(30);
+            process_count += 1;
+        }
+
+        // しっぽでちょこんと支えて登る
+        int16_t curAngle = g_angle;
+        // if(curAngle < -3 && process_count <= 1){
+        //     printf("しっぽ上げる, process_count=%d\n", process_count);
+        //     tailMotor->setPWM(10);
+        //     process_count += 1;
+        // }
+        if(curAngle < -9){
+            //printf("しっぽ上げる\n");
+            prevAngle = curAngle;
+            //tailMotor->setPWM(30);
+        }
+        if (prevAngle < -9 && curAngle >= 0){
+            printf("スラロームオン\n");
             slalom_flg=true;
             curAngle = 0;//初期化
             prevAngle = 0;//初期化
-            captain->decide(EVT_slalom_on);
+            distance = 0;//初期化
+            armMotor->setPWM(-100);
         }
-    }
-
-    if (b2){
-        printf("deg=%lf,touchSensor=%d\n",r,touchSensor->isPressed());
     }
     
     //スラローム専用処理
     //printf("g_angle=%d\n", g_angle);
     if(slalom_flg){
 
-        //captain->decide(EVT_slalom_avoid);
-        printf("Degree=%d\n", observer->getDegree());
-        // printf("distance=%d", dis);
-        // printf(",r+g+b=%d,r=%d,g=%d,b=%d,right_angle=%d\n",cur_rgb.r + cur_rgb.g + cur_rgb.b,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
-    
-        // if ((getDegree() > 10 || getDegree() < -10) && obstcl_mode < 1){
-        //     //printf("Degree=%d\n", observer->getDegree());
-        //     captain->decide(EVT_goto_obstcl); // 
+        if ((challenge_stepNo >= 13 && challenge_stepNo <= 13) || (challenge_stepNo >= 10 && challenge_stepNo <= 12)){
+            if (++traceCnt && traceCnt > 50) {
+                printf(",sonarDistance=%d, d=%d, degree=%d, challenge_stepNo=%d,r+g+b=%d\n",sonarDistance,getDistance(), degree, challenge_stepNo,curRgbSum);
+                //printf(",r+g+b=%d,r=%d,g=%d,b=%d\n",curRgbSum,cur_rgb.r,cur_rgb.g,cur_rgb.b);
+                traceCnt = 0;
+            }
+        }
+        
+        //スラロームオン後、１つ目の障害物を見つける
+        if (challenge_stepNo == 0 && distance > 150){
+            printf(",スラロームオン後、１つ目の障害物を見つける\n");
+            captain->decide(EVT_obstcl_reached);
+         // １つ目の障害物に接近する
+        }else if(challenge_stepNo == 1 && check_sonar(50,255)){
+        // }else if(challenge_stepNo == 1 && sonarDistance > 45 && sonarDistance < 55){
+             printf(",１つ目の障害物を回避する\n");
+               captain->decide(EVT_obstcl_avoidable);
+               prevRgbSum = curRgbSum;
+               line_over_flg = false;
+        // 黒ラインを超えるまで前進し、超えたら向きを調整する
+        }else if (challenge_stepNo == 2 && !line_over_flg){
+        //     //printf(",curRgb=%d, prevRgb=%d\n",curRgbSum,prevRgbSum);
+             if (curRgbSum < 120) {
+                 prevRgbSum = curRgbSum;
+             }
+             if(prevRgbSum < 120 && curRgbSum > 160){
+                 printf(",黒ラインを超えるまで前進し、超えたら向きを調整する\n");
+                 line_over_flg = true;
+                 prevRgbSum = 0;
+                 captain->decide(EVT_obstcl_angle);
+             }
+        // ２つ目の障害物に向かって前進する
+        }else if (challenge_stepNo == 3 && check_sonar(20,30)){
+            printf(",２つ目の障害物に向かって前進する\n");
+            captain->decide(EVT_obstcl_infront);
+        // ２つ目の障害物に接近したら向きを変える
+        }else if (challenge_stepNo == 4 && check_sonar(0,5)){
+            printf(",２つ目の障害物に接近したら向きを変える\n");
+            captain->decide(EVT_obstcl_reached);
+            prevRgbSum = curRgbSum;
+            line_over_flg = false;
+        // 視界が晴れたら左上に前進する
+        }else if(challenge_stepNo == 5 && check_sonar(20,255)){
+            printf(",視界が晴れたところで前進する");
+            captain->decide(EVT_obstcl_avoidable);
+            prevRgbSum = curRgbSum;
+            line_over_flg = false;
+        // 黒ラインを超えるまで前進し、超えたら向きを調整し３つ目の障害物に接近する
+        }else if (challenge_stepNo == 6 && !line_over_flg){
+            if (curRgbSum < 100) {
+                prevRgbSum = curRgbSum;
+            }
+            if(prevRgbSum < 100 && curRgbSum > 155){
+                printf(",黒ラインを超えたら向きを調整し障害物に接近する\n");
+                captain->decide(EVT_obstcl_angle);
+                line_over_flg = true;
+            }
+        // ３つ目の障害物に接近したら後退して調整する
+        }else if (challenge_stepNo == 7 && check_sonar(0,5)){
+                printf(",３つ目の障害物に接近したら後退して調整する\n");
+                captain->decide(EVT_obstcl_reached);
+                line_over_flg = true;
+        // 視界が晴れたら左下に前進する
+        }else if (challenge_stepNo == 8 && check_sonar(20,255)){
+                printf(",視界が晴れたら左下に前進する\n");
+                captain->decide(EVT_obstcl_avoidable);
+                prevRgbSum = curRgbSum;
+                line_over_flg = false;
+        // 黒ラインを超えるまで前進し、超えたら向きを調整し４つ目の障害物に接近する
+        }else if (challenge_stepNo == 9 && !line_over_flg){
+            if (curRgbSum < 100) {
+                prevRgbSum = curRgbSum;
+            }
+            if(prevRgbSum < 100 && curRgbSum > 160){
+                printf(",黒ラインを超えたら向きを調整し障害物に接近する\n");
+                captain->decide(EVT_obstcl_angle);
+                line_over_flg = true;
+            }
+        // ４つ目の障害物に接近する
+        //}else if (challenge_stepNo == 10 && check_sonar(10,20)){
+        }else if (challenge_stepNo == 10 && check_sonar(0,10)){
+            printf(",４つ目の障害物に接近する\n");
+            captain->decide(EVT_obstcl_infront);
+        // ４つ目の障害物に接近したら向きを変える
+        }else if (challenge_stepNo == 11 && check_sonar(0,5)){
+            printf(",４つ目の障害物に接近したら向きを変える\n");
+            captain->decide(EVT_obstcl_reached);
+        }else if (challenge_stepNo == 12 && check_sonar(20,255)){
+            printf(",視界が晴れたら左上に前進する\n");
+            captain->decide(EVT_obstcl_avoidable);
+        }
+
+
+        // // ロストしたら元に戻す（adjust_flgで制御）
+        // if (challenge_stepNo == 0 && curRgbSum < 170 && !adjust_flg){
+        //     printf("ロスト検知（ラインの上）\n");
+        //     adjust_flg = true;
+        //     captain->decide(EVT_lost_on_the_line);
+        // }
+        // // 戻り確認
+        // if  (challenge_stepNo == 0 && curRgbSum > 180 && adjust_flg){
+        //     printf("元に戻す（ラインの上）\n");
+        //     adjust_flg = false;
+        //     captain->decide(EVT_slalom_On);
         // }
 
-        // 左下の直角カーブ対応
-        if(cur_rgb.r + cur_rgb.g + cur_rgb.b <= 80 && !right_angle && line_trace_flg){
-            right_angle=true;
-            line_trace_flg = false;
-            printf("直角ターン\n");
-            captain->decide(EVT_turnCnr); // ここで直角ターン
-        }
-        //車体の傾きでスラローム終了を検知
         //printf("g_angle=%d\n");
-         if(g_angle > 10){
+         if(g_angle > 10 && challenge_stepNo > 2){
+            printf("スラロームオフ\n");
             slalom_flg = false;
-            angl_calc_flg = false;
         }
-    }
-
-    if(angl_calc_flg){
-        n_av = g_anglerVelocity;
-        curTime = clock->now();
-        b3_aa += calc_angle(n_av,b_av,curTime - prevTime);
-        //printf("b3_aa=%lf,n_av=%d,curTime=%d\n,",b3_aa,n_av,curTime);
-        b_av = n_av;
-        prevTime = curTime;
-        //printf("b_av=%d,g_anglerVelocity=%d,prevTime=%d\n",b_av,g_anglerVelocity,prevTime);
-        clock->sleep(10); // wait a little
     }
 
     //sano　青判定３回目
@@ -363,17 +457,18 @@ void Observer::operate() {
 
     // display trace message in every PERIOD_TRACE_MSG ms */
     if (++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) {
-    //if ((++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) && (d < 11000)) {
-        traceCnt = 0;
-        //_debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), getDistance(), getAzimuth(), getLocX(), getLocY()));
-    //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
-    //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
-    //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
-    //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): angle = %d, anglerVelocity = %d", clock->now(), g_angle, g_anglerVelocity));
-    //} else if (d >= 11000) {
-    //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
-    //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
-    //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
+        // if (d < 11000) {
+        //     traceCnt = 0;
+        //     //_debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), getDistance(), getAzimuth(), getLocX(), getLocY()));
+        // //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
+        // //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
+        // //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
+        // //  _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): angle = %d, anglerVelocity = %d", clock->now(), g_angle, g_anglerVelocity));
+        // } else if (d >= 11000) {
+        // //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): distance = %d, azimuth = %d, x = %d, y = %d", clock->now(), d, getAzimuth(), getLocX(), getLocY()));
+        // //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): hsv = (%03u, %03u, %03u)", clock->now(), g_hsv.h, g_hsv.s, g_hsv.v));
+        // //    _debug(syslog(LOG_NOTICE, "%08u, Observer::operate(): rgb = (%03u, %03u, %03u)", clock->now(), g_rgb.r, g_rgb.g, g_rgb.b));
+        // }
     }
 }
 
@@ -395,7 +490,6 @@ void Observer::goOffDuty() {
 
 bool Observer::check_touch(void) {
     if (touchSensor->isPressed()){  //sano_t
-    printf("タッチ\n");
         return true;
     } else {
         return false;
@@ -404,7 +498,17 @@ bool Observer::check_touch(void) {
 
 bool Observer::check_sonar(void) {
     int32_t distance = sonarSensor->getDistance();
-    if ((distance <= SONAR_ALERT_DISTANCE) && (distance >= 0)) {
+    if (distance <= SONAR_ALERT_DISTANCE && distance >= 0) {
+        return true; // obstacle detected - alert
+    } else {
+        return false; // no problem
+    }
+}
+
+bool Observer::check_sonar(int16_t sonar_alert_dist_from, int16_t sonar_alert_dist_to) {
+    int32_t distance = sonarSensor->getDistance();
+    //printf(",distance2=%d, sonar_alert_dist_from=%d, sonar_alert_dist_to=%d\n",distance, sonar_alert_dist_from, sonar_alert_dist_to );
+    if (distance >= sonar_alert_dist_from && distance <= sonar_alert_dist_to) {
         return true; // obstacle detected - alert
     } else {
         return false; // no problem
@@ -548,14 +652,16 @@ LineTracer::~LineTracer() {
 
 ChallengeRunner::ChallengeRunner(Motor* lm, Motor* rm, Motor* tm) : LineTracer(lm, rm, tm){
     _debug(syslog(LOG_NOTICE, "%08u, ChallengeRunner constructor", clock->now()));
+    steering    = new Steering(*leftMotor, *rightMotor);
     leftMotor   = lm;
     rightMotor  = rm;
-    // //trace_pwmLR = 0;
-    // speed       = SPEED_NORM;
-    pwm_p_L = 10; //sano
-    pwm_p_R = 10; //sano
-    
-    frozen      = false;
+    pwm_L = 20;
+    pwm_R = 20;
+    pwmMode = 1;
+    count = 0;
+    procCount = 1;
+    traceCnt = 0;
+    frozen = false;
 }
 
 void ChallengeRunner::haveControl() {
@@ -565,47 +671,80 @@ void ChallengeRunner::haveControl() {
 
 void ChallengeRunner::operate() {
 
-    if (!line_trace_flg){
-        if (frozen) {
-            pwm_L = 0;
-            pwm_R = 0;
-        } else{
-            pwm_L = pwm_p_L;
-            pwm_R = pwm_p_R;
-        }
-        leftMotor->setPWM(pwm_L);
-        rightMotor->setPWM(pwm_R);
-    } else {
-        //printf("ライントレース\n");
-        if (frozen) {
-            forward = turn = 0; /* 障害物を検知したら停止 */
-        } else{
-            forward = speed; //前進命令
- 
-            // PID control by Gray Scale with blue cut
-            int16_t sensor = g_grayScaleBlueless;
-            int16_t target = GS_TARGET;
-
-            if (state == ST_challenge_L) {
-                turn = ltPid->compute(sensor, target);
-            } else {
-                turn = (-1) * ltPid->compute(sensor, target);
+    if (frozen) {
+        //printf("Stop");
+        pwm_L = 0;
+        pwm_R = 0;
+    }else{
+        if (pwmMode != Mode_speed_constant){
+            if (++count && count == procCount){
+                switch (pwmMode) {
+                    case Mode_speed_increaseL:
+                        ++pwm_L;
+                        break;
+                    case Mode_speed_decreaseL:
+                        --pwm_L;
+                        break;
+                    case Mode_speed_increaseR:
+                        ++pwm_R;
+                        break;
+                    case Mode_speed_decreaseR:
+                        --pwm_R;
+                        break;
+                    case Mode_speed_increaseLR:
+                        ++pwm_L;
+                        ++pwm_R;
+                        break;
+                    case Mode_speed_decreaseLR:
+                        --pwm_L;
+                        --pwm_R;
+                        break;
+                    case Mode_speed_incrsLdcrsR:
+                        ++pwm_L;
+                        --pwm_R;
+                        break;
+                    case Mode_speed_incrsRdcrsL:
+                        --pwm_L;
+                        ++pwm_R;
+                        break;
+                    default:
+                        break;
+                }
+                count = 0; //初期化
             }
         }
-        /* 左右モータでロボットのステアリング操作を行う */
-        pwm_L = forward - turn;
-        pwm_R = forward + turn;
-
-        leftMotor->setPWM(pwm_L);
-        rightMotor->setPWM(pwm_R);
     }
-    //printf("pwm_L=%d, pwm_R=%d, forward=%d\n", pwm_L,pwm_R,forward);
+    
+    leftMotor->setPWM(pwm_L);
+    rightMotor->setPWM(pwm_R);
+
+    // if (++traceCnt && traceCnt > 50) {
+    //     printf(",pwm_L=%d, pwm_R=%d, count=%d, procCount=%d\n", pwm_L,pwm_R,count,procCount);
+    //     traceCnt = 0;
+    // }
 }
 
-//　直角ターン用　左右の車輪に駆動にそれぞれ値を指定する sano
-void ChallengeRunner::setPwmLR(int p_L,int p_R) {
-    pwm_p_L = p_L;
-    pwm_p_R = p_R;
+//　左右の車輪に駆動にそれぞれ値を指定する sano
+void ChallengeRunner::setPwmLR(int p_L,int p_R,int mode,int proc_count) {
+    pwm_L = p_L;
+    pwm_R = p_R;
+    pwmMode = mode;
+    procCount = proc_count;
+    count = 0;
+    //printf(",pwm_p_L=%d, pwm_p_R=%d\n", pwm_p_L, pwm_p_R);
+}
+
+//　ステアリング操作を行う
+void ChallengeRunner::setPower(int 	power, int 	turnRatio) {
+    steering->setPower(power, turnRatio);
+}
+
+int8_t ChallengeRunner::getPwmL() {
+    return pwm_L;
+}
+
+int8_t ChallengeRunner::getPwmR() {
+    return pwm_R;
 }
 
 ChallengeRunner::~ChallengeRunner() {
@@ -627,11 +766,6 @@ void Captain::takeoff() {
     tailMotor   = new Motor(PORT_D); // sano
     armMotor   = new Motor(PORT_A); //sano
     steering    = new Steering(*leftMotor, *rightMotor);
-    b_av = 0; //sano
-    n_av = 0;//sano
-    b3_aa = 0; //sano
-    curTime =0; //sano
-    prevTime=0; //sano
     
     /* LCD画面表示 */
     ev3_lcd_fill_rect(0, 0, EV3_LCD_WIDTH, EV3_LCD_HEIGHT, EV3_LCD_WHITE);
@@ -702,13 +836,11 @@ void Captain::decide(uint8_t event) {
                 case EVT_sonar_Off:
                     //lineTracer->unfreeze();
                     break;
-                case EVT_slalom_on:
+                case EVT_slalom_reached:
                     state = ST_challenge_R;
                     line_trace_flg = false;
-                    armMotor->setPWM(0);
-                    tailMotor->setPWM(-100);
                     challengeRuuner->haveControl();
-                    challengeRuuner->setPwmLR(20,20);
+                    challengeRuuner->setPwmLR(20,20,Mode_speed_decreaseLR,10);
                     break;
                 default:
                     break;
@@ -722,15 +854,38 @@ void Captain::decide(uint8_t event) {
                 case EVT_sonar_Off:
                     //lineTracer->unfreeze();
                     break;
-                case EVT_slalom_on:
+                case EVT_slalom_reached:
+                    printf("ぶつかり\n");
                     state = ST_challenge_L;
                     line_trace_flg = false;
-                    armMotor->setPWM(0);
-                    tailMotor->setPWM(-100);
+                    armMotor->setPWM(-50);
                     challengeRuuner->haveControl();
-                    challengeRuuner->setPwmLR(20,20);
-                    //challengeRuuner->freeze();
-                    //printf("angleX=%d\n", observer->getDegree());
+                    challengeRuuner->setPwmLR(20,20,Mode_speed_constant,1);
+                    clock->sleep(1000);
+                    challengeRuuner->setPwmLR(10,10,Mode_speed_constant,1);
+                    clock->sleep(1000);
+                    challengeRuuner->freeze();
+                    clock->sleep(300);
+                    challengeRuuner->unfreeze();
+                    // challengeRuuner->setPwmLR(40,-40,Mode_speed_constant,1);
+                    // clock->sleep(740);
+                    // challengeRuuner->setPwmLR(30,30,Mode_speed_constant,1);
+                    // clock->sleep(750);
+                    // challengeRuuner->setPwmLR(-40,40,Mode_speed_constant,1);
+                    // clock->sleep(755);
+                    // //armMotor->setPWM(-100);
+                    // challengeRuuner->setPwmLR(13,13,Mode_speed_constant,1);
+                    // clock->sleep(2000);
+                    challengeRuuner->setPwmLR(-20,-20,Mode_speed_constant,1);
+                    for (int i = 0; i < 50; i++){
+                         clock->sleep(10);
+                    }
+                    //printf("distance=%d\n", sonarSensor->getDistance());
+                    challengeRuuner->freeze();
+                    armMotor->setPWM(80);
+                    clock->sleep(300);
+                    challengeRuuner->unfreeze();
+                    challengeRuuner->setPwmLR(44,40,Mode_speed_decreaseLR,40);
                     break;
                 default:
                     break;
@@ -755,61 +910,129 @@ void Captain::decide(uint8_t event) {
         break;
         case ST_challenge_L:
             switch (event) {
-                case EVT_goto_obstcl:
-                // printf("Degree=%d\n", observer->getDegree());
-                //     if (observer->getDegree() > 0){
-                //         challengeRuuner->setPwmLR(0,0);
-                //     }else {
-                //         challengeRuuner->setPwmLR(0,0);
-                //     }
+                case EVT_sonar_On:
+                    printf("ソナーオン\n");
+                    challengeRuuner->setPwmLR(10,-9,Mode_speed_constant,1);
+                    challenge_stepNo += 1;
                     break;
-                case EVT_slalom_go:
-                    // challengeRuuner->setPwmLR(10,10);
-                    // printf("degree1=%d\n", observer->getDegree());
-                    // //clock->sleep(700); // wait a little
-                    // printf("degree2=%d\n", observer->getDegree());
-                    // if (observer->getDegree() > 0) {
-                    //      challengeRuuner->setPwmLR(0,10);
-                    // }else{
-                    //      challengeRuuner->setPwmLR(10,0);
-                    // }
-                    // printf("distance1=%d\n", sonarSensor->getDistance());
-                    // while (sonarSensor->getDistance() < 30 || sonarSensor->getDistance() > 45){
-                    //     printf("distance2=%d\n", sonarSensor->getDistance());
-                    //     clock->sleep(10); // wait a little
-                    // }
-                    // printf("distance3=%d\n", sonarSensor->getDistance());
-                    // while(observer->getDegree() != 0){
-                    //    printf("dgree=%d\n", observer->getDegree());
-                    //    clock->sleep(10); // wait a little
-                    // }
-                    // // for (int i = 0; i < 300000; i++){
-                    // //      clock->sleep(10); // wait a little
-                    // //      //printf("distance=%d\n", sonarSensor->getDistance());
-                    // // }
-                    // // if (observer->getAccumAngleVl() > 0){
-                    // //     printf("右\n");
-                    // //     challengeRuuner->setPwmLR(-10,10);
-                    // // } else{
-                    // //     printf("左\n");
-                    // //     challengeRuuner->setPwmLR(10,-10);
-                    // // }
-                    // // while (observer->getAccumAngleVl() != 0){
-                    // //     printf("accumAngleVL=%d\n",observer->getAccumAngleVl());
-                    // //     clock->sleep(10); // wait a little
-                    // // }
-                    // printf("方向修正完了\n");
-                    // challengeRuuner->freeze();
-                    // clock->sleep(5000); // wait a little
-                    // challengeRuuner->unfreeze();
+                case EVT_slalom_On:
+                    printf("スラロームオン\n");
+                    challengeRuuner->freeze();
+                    clock->sleep(500000);
+                    //challengeRuuner->setPwmLR(30,30,Mode_speed_constant,1);
+                    challenge_stepNo += 1;
                     break;
-                case EVT_slalom_avoid:
+                case EVT_obstcl_unkown:
+                    if (challenge_stepNo == 0){
+                        //challengeRuuner->freeze();
+                        clock->sleep(500);
+                        challengeRuuner->setPwmLR(18,-15,Mode_speed_incrsRdcrsL,90);
+                        challenge_stepNo += 1;
+                    }
+                    break;
+                case EVT_obstcl_detect:
+                    if (challenge_stepNo == 1){
+                        challengeRuuner->setPwmLR(30,30,Mode_speed_constant,1);
+                        challenge_stepNo += 1;
+                    }
+                    break;
+                case EVT_obstcl_angle:
+                    if (challenge_stepNo == 2){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(15,-10,Mode_speed_incrsRdcrsL,90);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 6){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(10,15,Mode_speed_decreaseL,90);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 9){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        //challengeRuuner->setPwmLR(15,-15,Mode_speed_incrsRdcrsL,100);
+                        challengeRuuner->setPwmLR(15,5,Mode_speed_increaseL,90);
+                        challenge_stepNo += 1;
+                    }
+                    break;
+                case EVT_obstcl_infront:
+                    if (challenge_stepNo == 3){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(25,20,Mode_speed_decreaseL,150);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 10){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(15,13,Mode_speed_constant,1);
+                        challenge_stepNo += 1;
+                    }
+                    break;
+                case EVT_obstcl_reached:
+                    if (challenge_stepNo == 0){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(-15,17,Mode_speed_incrsLdcrsR,100);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 4){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(15,-13,Mode_speed_constant,1);
+                        //clock->sleep(700);                 
+                        //challengeRuuner->setPwmLR(-16,14,Mode_speed_constant,1);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 7){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(-15,10,Mode_speed_constant,1);
+                        clock->sleep(500);
+                        challengeRuuner->setPwmLR(-5,15,Mode_speed_constant,1);
+                        clock->sleep(500);
+                        // challengeRuuner->freeze();
+                        // clock->sleep(30000);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 11){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(15,-15,Mode_speed_incrsRdcrsL,50);
+                        challenge_stepNo += 1;
+                    }
+                    break;
+                case EVT_obstcl_avoidable:
+                    if (challenge_stepNo == 1){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(25,23,Mode_speed_increaseL,45);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 5){
+                        challengeRuuner->freeze();
+                        clock->sleep(300);
+                        challengeRuuner->unfreeze();
+                        challengeRuuner->setPwmLR(10,12,Mode_speed_increaseR,75);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 8){
+                        challengeRuuner->setPwmLR(20,27,Mode_speed_constant,1);
+                        challenge_stepNo += 1;
+                    }else if(challenge_stepNo == 12){
+                        challengeRuuner->setPwmLR(25,23,Mode_speed_constant,1);
+                        challenge_stepNo += 1;
+                    }
                     break;
                 case EVT_turnCnr:
                     challengeRuuner->freeze();
                     clock->sleep(1000); // wait a little
                     challengeRuuner->unfreeze();
-                    challengeRuuner->setPwmLR(100,0);
+                    challengeRuuner->setPwmLR(100,0,Mode_speed_constant,1);
                     printf("ターンしています\n");
                     clock->sleep(735); // wait a little
                     printf("スリープ終了した\n");
@@ -827,32 +1050,16 @@ void Captain::decide(uint8_t event) {
                     challengeRuuner->freeze();
                     clock->sleep(1000); // wait a little
                     challengeRuuner->unfreeze();
-                    challengeRuuner->setPwmLR(10,-10);
+                    challengeRuuner->setPwmLR(10,-10,Mode_speed_constant,1);
                     //ソナーを回転しを見つける
                     for (int i = 0; i < 300000; i++){
-                        //printf("dis_obj=%d,",sonarSensor->getDistance());
-                        // if(sonarSensor->getDistance() > 180 && sonarSensor->getDistance() <250){
-                        //     printf("物体を見つけた\n");
-                        //     //ソナーセンサーの放射角度20度を補正
-                        //     while(b3_aa < 20){
-                                 n_av = gyroSensor->getAnglerVelocity();
-                                 curTime = clock->now();
-                                 //printf("curTime=%d,",curTime);
-                                 b3_aa += calc_angle(n_av,b_av,curTime - prevTime);
-                                 //printf("b3_aa=%lf,n_av=%d,curTime=%d,",b3_aa,n_av,curTime);
-                                 b_av = n_av;
-                                 prevTime = curTime;
-                                //printf("b_av=%d,g_anglerVelocity=%d,prevTime=%d\n",b_av,g_anglerVelocity,prevTime);
-                                clock->sleep(10); // wait a little
-                        //     }
-                        //     lineTracer->freeze();
-                        //     clock->sleep(500); // wait a little
-                        //     lineTracer->unfreeze();
-                        //     break;
-                        // }
+                        
                     }
-                    challengeRuuner->setPwmLR(30,30);
+                    challengeRuuner->setPwmLR(30,30,Mode_speed_constant,1);
                     clock->sleep(10000); // wait a little
+                    break;
+                case EVT_lost_on_the_line:
+                    challengeRuuner->setPwmLR(10,-10,Mode_speed_constant,1);
                     break;
                 default:
                     break;
