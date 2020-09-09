@@ -386,13 +386,13 @@ void Observer::operate() {
             if (curRgbSum < 100) {
                 prevRgbSum = curRgbSum;
             }
-            if(prevRgbSum < 100 && curRgbSum > 180){
+            if(prevRgbSum < 100 && curRgbSum > 170){
                 printf(",黒ラインを超えたら向きを調整する\n");
                 captain->decide(EVT_obstcl_angle);
                 line_over_flg = true;
             }
         // ４つ目の障害物に接近する
-        }else if(challenge_stepNo == 10 && check_sonar(0,10)){
+        }else if(challenge_stepNo == 10){
             printf(",４つ目の障害物に接近する\n");
             captain->decide(EVT_obstcl_infront);
         // ４つ目の障害物に接近したら向きを変える
@@ -889,8 +889,7 @@ void Captain::decide(uint8_t event) {
                         clock->sleep(300);
                         challengeRuuner->unfreeze();
                         challengeRuuner->setPwmLR(20,-20,Mode_speed_constant,1);
-                        clock->sleep(420);
-                        challengeRuuner->setPwmLR(25,15,Mode_speed_decreaseL,1);
+                        clock->sleep(430);
                         challenge_stepNo += 1;
                     }else if(challenge_stepNo == 13){
                         challengeRuuner->freeze();
@@ -905,13 +904,13 @@ void Captain::decide(uint8_t event) {
                         challengeRuuner->freeze();
                         clock->sleep(300);
                         challengeRuuner->unfreeze();
-                        challengeRuuner->setPwmLR(32,25,Mode_speed_decreaseL,60);
+                        challengeRuuner->setPwmLR(33,25,Mode_speed_decreaseL,120);
                         challenge_stepNo += 1;
                     }else if(challenge_stepNo == 10){
                         challengeRuuner->freeze();
                         clock->sleep(300);
                         challengeRuuner->unfreeze();
-                        challengeRuuner->setPwmLR(30,20,Mode_speed_decreaseL,50);
+                        challengeRuuner->setPwmLR(30,20,Mode_speed_decreaseL,100);
                         challenge_stepNo += 1;
                     }
                     break;
