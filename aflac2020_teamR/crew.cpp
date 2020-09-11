@@ -13,6 +13,8 @@
 rgb_raw_t g_rgb;
 hsv_raw_t g_hsv;
 
+//ぷるぷるぷる
+
 int16_t g_grayScale, g_grayScaleBlueless, test_mode, challenge_stepNo;
 bool b1, b2, b3, slalom_flg;
 // global variables to gyro sensor output from Observer to  Navigator and its sub-classes
