@@ -68,6 +68,7 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, Motor* tm, TouchSensor* ts, 
     prevAngR = 0;
     notifyDistance = 0;
     traceCnt = 0;
+
     prevGS = INT16_MAX;
     touch_flag = false;
     sonar_flag = false;
@@ -165,13 +166,13 @@ void Observer::operate() {
     // calculate gray scale and save them to the global area
     //スラローム上では、茶色地面なので青、赤を逆転っぽく sano
     if(!slalom_flg){
-        g_grayScale = (cur_rgb.r * 77 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
+        g_grayScale = (cur_rgb.r * 75 + cur_rgb.g * 120 + cur_rgb.b * 29) / 226;
         g_grayScaleBlueless = (cur_rgb.r * 77 + cur_rgb.g * 120 + (cur_rgb.b - cur_rgb.g) * 29) / 226; // B - G cuts off blue
     }else{
         g_grayScale = ((cur_rgb.r-4) * 77 + (cur_rgb.g-1) * 120 + (cur_rgb.b + 17) * 29) / 226;
         g_grayScaleBlueless = ((cur_rgb.r-4) * 77 + (cur_rgb.g-1) * 120 +  (cur_rgb.b - cur_rgb.g + 16)  * 29) / 226; // B - G cuts off blue
     }
-    
+
     // save gyro sensor output to the global area
     g_angle = gyroSensor->getAngle();
     g_anglerVelocity = gyroSensor->getAnglerVelocity();
