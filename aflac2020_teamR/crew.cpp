@@ -4,10 +4,12 @@
 //
 //  Created by Wataru Taniguchi on 2019/04/28.
 //  Copyright © 2019 Ahiruchan Koubou. All rights reserved.
-//
+//hugehuge
 
 #include "app.h"
 #include "crew.hpp"
+
+///
 
 // global variables to pass FIR-filtered color from Observer to Navigator and its sub-classes
 rgb_raw_t g_rgb;
