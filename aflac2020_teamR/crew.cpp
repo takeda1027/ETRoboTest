@@ -12,8 +12,7 @@
 // global variables to pass FIR-filtered color from Observer to Navigator and its sub-classes
 rgb_raw_t g_rgb;
 hsv_raw_t g_hsv;
-int16_t g_grayScale, g_grayScaleBlueless, test_mode, challenge_stepNo;
-bool b1, b2, b3, slalom_flg;
+int16_t g_grayScale, g_grayScaleBlueless, challenge_stepNo;
 // global variables to gyro sensor output from Observer to  Navigator and its sub-classes
 int16_t g_angle, g_anglerVelocity;
 
@@ -71,17 +70,14 @@ Observer::Observer(Motor* lm, Motor* rm, Motor* am, Motor* tm, TouchSensor* ts, 
     touch_flag = false;
     sonar_flag = false;
     lost_flag = false;
-    line_over_flg = false;
-    adjust_flg = false;
+    line_over_flg = false; // sano
+    adjust_flg = false; // sano
 
     curAngle = 0; //sano
     prevAngle = 0; //sano
-    test_mode = 1; // sanoテスト用
     challenge_stepNo = 0; // sano
 
-    b1 = false; // sano
-    b2 = true; // sano テスト用
-    b3 = false; // sano
+    blue2 = true; // sano テスト用
     slalom_flg = false; // sano
     moveBack_flg= false; // sano
     gyroSensor->setOffset(0);//sano
@@ -199,7 +195,7 @@ void Observer::operate() {
     locY += (deltaDist * cos(azimuth));
 
     //sano テスト
-    if(touchSensor->isPressed() && b2){
+    if(touchSensor->isPressed() && blue2){
         //azimuth =0;
         float hoge = 360.0 * azimuth/ M_2PI;
         if(hoge < 180){
@@ -266,35 +262,22 @@ void Observer::operate() {
     // sano
     curDegree = getDegree();
     sonarDistance = sonarSensor->getDistance();
- 
-    //ブルー１個目の判断 前方何もなし、ラインブルーの場合(スタート地点でなぜか処理に入ってしまうためcur_rgb.b <=255を追加)
-    if( cur_rgb.b - cur_rgb.r > 60 && !b1 && sonarDistance > 250 && cur_rgb.b <=255 && cur_rgb.r<=255){
-        b1 =true;
-    }else if(b1 && cur_rgb.b - cur_rgb.r < 40){
-        b1 = false; //１つめのブルー検知フラグを落とす
-    }
 
     //b-r青判定、スラロームが近い（前方障害あり）、ブルー２個目b2フラグ立てる
     if(cur_rgb.b - cur_rgb.r > 60 && sonarDistance < 50  && cur_rgb.b <=255 && cur_rgb.r<=255){
-        b2 =true;
+        blue2 =true;
     }
 
     //スラローム判定
-    if(b2 && !slalom_flg){
+    if(blue2 && !slalom_flg){
  
         if (sonarDistance >= 1 && sonarDistance <= 10 && !moveBack_flg){
             captain->decide(EVT_slalom_reached);
+            armMotor->setPWM(30);
             moveBack_flg = true;
         }
 
-        if (moveBack_flg && challenge_stepNo == 0 && sonarDistance <= 10 && process_count <= 1){
-            //printf("アーム上げる\n");
-            armMotor->setPWM(30);
-            process_count += 1;
-        }
-
         curAngle = g_angle;
-
         if(curAngle < -9){
             prevAngle = curAngle;
         }
@@ -382,7 +365,7 @@ void Observer::operate() {
             if (curRgbSum < 100) {
                 prevRgbSum = curRgbSum;
             }
-            if(prevRgbSum < 100 && curRgbSum > 200){
+            if(prevRgbSum < 100 && curRgbSum > 195){
                 printf(",黒ラインを超えたら向きを調整する\n");
                 captain->decide(EVT_obstcl_angle);
                 line_over_flg = true;
@@ -429,13 +412,6 @@ void Observer::operate() {
             slalom_flg = false;
         }
     }
-
-    // //sano　青判定３回目
-    // if( cur_rgb.b - cur_rgb.r > 60 && right_angle){
-    //     //printf(",b-r=%d,r=%d,g=%d,b=%d,right_angle=%d\n", cur_rgb.b - cur_rgb.r,cur_rgb.r,cur_rgb.g,cur_rgb.b,right_angle);
-    //     b3 = true;
-    //     captain->decide(EVT_turnb3); // ソナー稼働回転、物体を見つけに行く
-    // }
 
     // display trace message in every PERIOD_TRACE_MSG ms */
     //if (++traceCnt * PERIOD_OBS_TSK >= PERIOD_TRACE_MSG) {
@@ -965,7 +941,7 @@ void Captain::decide(uint8_t event) {
                         challengeRuuner->setPwmLR(20,28,Mode_speed_constant,1);
                         challenge_stepNo += 1;
                     }else if(challenge_stepNo == 12){
-                        challengeRuuner->setPwmLR(25,25,Mode_speed_increaseR,37);
+                        challengeRuuner->setPwmLR(25,25,Mode_speed_increaseR,33);
                         challenge_stepNo += 1;
                     }else if (challenge_stepNo == 14){
                         challengeRuuner->setPwmLR(25,30,Mode_speed_incrsLdcrsR,100);
