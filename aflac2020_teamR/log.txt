@@ -1,0 +1,119 @@
+invoker make app=aflac2020_teamR sim up
+rm -rf /home/ss55/etrobo/hrp3/sdk/workspace/.././OBJ/
+Generating Makefile from ../common/Makefile.app.
+make[1]: Entering directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+rm -f cfg1_out cfg1_out.o cfg1_out.c cfg1_out.syms cfg1_out.srec module_cfg.h module_cfg.c \#* *~ *.o
+make[1]: Leaving directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+make[1]: Entering directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+  CFG[1]  module_cfg.h
+[cfg.rb] Generated cfg1_out.c
+  CFG[2]  module_cfg.h
+[cfg.rb] Generated module_cfg.c
+[cfg.rb] Generated module_cfg.h
+make[1]: Leaving directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+make[1]: Entering directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+  CC      module_cfg.c
+  CC      ../../library/t_perror.c
+  CC      ../../library/strerror.c
+  CC      ../../library/vasyslog.c
+  CC      ../../target/ev3_gcc/TLSF-2.4.6/src/tlsf.c
+  CC      ../common/ev3api/src/ev3api_battery.c
+  CC      ../common/ev3api/src/ev3api.c
+  CC      ../common/ev3api/src/ev3api_brick.c
+  CC      ../common/ev3api/src/ev3api_fs.c
+  CC      ../common/ev3api/src/ev3api_speaker.c
+  CC      ../common/ev3api/src/ev3api_lcd.c
+  CC      ../common/ev3api/src/ev3api_motor.c
+  CC      ../common/ev3api/src/ev3api_newlib.c
+  CC      ../common/ev3api/src/ev3api_sensor.c
+  CXX     ../workspace/aflac2020_teamR/crew.cpp
+  CXX     ../workspace/aflac2020_teamR/SeesawCrimber.cpp
+  CXX     ../workspace/aflac2020_teamR/utility.cpp
+  CXX     ../workspace/aflac2020_teamR/LimboDancer.cpp
+  CXX     ../workspace/aflac2020_teamR/app.cpp
+  LD      app
+make[1]: Leaving directory '/home/ss55/etrobo/hrp3/sdk/OBJ'
+fakemake on HRP3: build succeed: aflac2020_teamR
+rm -rf /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ/
+cd /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ/ && \
+ruby /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/../../configure.rb  -T v850_gcc -A app \
+	-a ../workspace/aflac2020_teamR \
+	-D ../.. \
+	-l c++ \
+	-m ../common/Makefile.img \
+	-o "" \
+	-t \
+	-d ./dep \
+	-C ../common/athrill_common.cdl \
+	-U "" && \
+make clean
+Generating Makefile from ../common/Makefile.img.
+make[1]: Entering directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+rm -f \#* *~ ./*.o ./dep/*.d  check.timestamp
+rm -f asp asp.syms asp.srec asp.bin
+rm -f kernel_opt.timestamp   cfg3_out.db
+rm -f cfg3_out.syms cfg3_out.srec 
+rm -f kernel_cfg.timestamp kernel_cfg.h kernel_cfg.c   cfg2_out.db
+rm -f cfg2_out.syms cfg2_out.srec kernel_cfg_asm.S 
+rm -f offset.timestamp offset.h
+rm -f cfg1_out.syms cfg1_out.srec cfg1_out
+rm -f cfg1_out.timestamp cfg1_out.c cfg1_out.db
+rm -rf ./gen
+rm -f libkernel.a
+make[1]: Leaving directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+# -S "banner.o syslog.o serial.o logtask.o" 
+(cd /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ/ && \
+make offset.h kernel_cfg.h && \
+make -j8 > /dev/null ) && \
+cp /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/.././OBJ//asp /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace && \
+echo "/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/aflac2020_teamR" > /home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/workspace/appdir
+make[1]: Entering directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+if grep -sq  "tecsgen.cfg" ../workspace/aflac2020_teamR/app.cfg ; then \
+	cat ../workspace/aflac2020_teamR/app.cfg > tmp_app.cfg ; \
+else \
+	echo "INCLUDE(\"tecsgen.cfg\")" >> tmp_app.cfg; \
+	cat ../workspace/aflac2020_teamR/app.cfg >> tmp_app.cfg ; \
+fi; 
+ruby ../../tecsgen/tecsgen.rb ../common/athrill_common.cdl -R -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include --cpp "v850-elf-gcc -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include  -D TECSGEN -E" -g ./gen
+ruby ../../cfg/cfg.rb --pass 1 --kernel asp -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include --api-table ../../kernel/kernel_api.def --symval-table ../../kernel/kernel_sym.def  --symval-table ../../target/v850_gcc/target_sym.def --api-table ../common/ev3api/ev3api.csv \
+					-M ./dep/cfg1_out_c.d ../../target/v850_gcc/target_kernel.cfg tmp_app.cfg
+[cfg.rb] Generated cfg1_out.c
+v850-elf-gcc -c -O2 -Wall -g   -mv850e2v3 -mdisable-callt -mhard-float -DMAKE_SIM -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -DALLFUNC  -I../../kernel ../../arch/v850_gcc/start.S
+v850-elf-gcc -c -O2 -Wall -g   -mv850e2v3 -mdisable-callt -mhard-float -DMAKE_SIM -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -DALLFUNC  -I../../kernel ../../arch/v850_gcc/v850_mul.S
+v850-elf-g++ -O2 -Wall -g   -mv850e2v3 -mdisable-callt -mhard-float -DMAKE_SIM -DBUILD_EV3_PLATFORM -DLABEL_ASM  -DTOPPERS_SUPPORT_PROTECT -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -L . -nostdlib -nostartfiles -lgcc -lc    -nostdlib -Wl,-T,../../target/v850_gcc/v850es_fk3.ld -o cfg1_out \
+					start.o v850_mul.o  ./cfg1_out.o  -lstdc++ -lm -lc -lgcc -std=c++11  
+ruby ../../cfg/cfg.rb --pass 2 -O --kernel asp -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -T ../../target/v850_gcc/target_offset.trb \
+			--rom-symbol cfg1_out.syms --rom-image cfg1_out.srec
+[cfg.rb] Generated offset.h
+ruby ../../cfg/cfg.rb --pass 2 --kernel asp -I. -I../../include -I. -I../../include -I../../target/v850_gcc/drivers -I../../target/v850_gcc -I../../arch/v850_gcc -I../../arch/gcc -I../.. -I../.. -I/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ/../../../athrill/apl/include -I../common/ev3api/include -I../common/ev3api/src -I../workspace/aflac2020_teamR -I../../target/v850_gcc/athrill -I../../../athrill/apl/include -I../../../athrill/apl/src -I../common -I../common/ev3api -I../common/ev3api/include -I../../../athrill/apl/include -I../common/library/libcpp-ev3/include -I../workspace/aflac2020_teamR/app -I../workspace/aflac2020_teamR/unit -I./gen -I../../tecs_kernel -I/tecs -I/tecs/rpc -I../../target/v850_gcc/TLSF-2.4.6/include -I../../target/v850_gcc/drivers/brick/include -I../../target/v850_gcc/drivers/common/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/arch/arm/include -I../../target/v850_gcc/drivers/common/virtual-linux-kernel/include -I../../target/v850_gcc/drivers/gpio/include -I../../target/v850_gcc/drivers/motor/include -I../../target/v850_gcc/drivers/uart/include -I../../target/v850_gcc/pil/include -I../../target/v850_gcc/platform/include -T ../../target/v850_gcc/target_kernel.trb
+[cfg.rb] Generated kernel_cfg.h
+[cfg.rb] Generated kernel_cfg.c
+[cfg.rb] Generated kernel_cfg_asm.S
+make[1]: Leaving directory '/home/ss55/etrobo/ev3rt-athrill-v850e2m/sdk/OBJ'
+fakemake on ASP3: build succeed: aflac2020_teamR.asp
+launch sim
+core id num=1
+ROM : START=0x0 SIZE=2048
+RAM : START=0x200000 SIZE=2048
+RAM : START=0x5ff7000 SIZE=10240
+RAM : START=0x7ff7000 SIZE=10240
+ELF SET CACHE RIGION:addr=0x0 size=182 [KB]
+Elf loading was succeeded:0x0 - 0x2db80 : 182.896 KB
+Elf loading was succeeded:0x2db80 - 0x2e120 : 1.416 KB
+ELF SYMBOL SECTION LOADED:index=106
+ELF SYMBOL SECTION LOADED:sym_num=1692
+ELF STRING TABLE SECTION LOADED:index=107
+DEBUG_FUNC_VDEV_TX_IPADDR = 127.0.0.1
+VDEV:TX IPADDR=127.0.0.1
+VDEV:TX PORTNO=54001
+VDEV:RX IPADDR=127.0.0.1
+VDEV:RX PORTNO=54002
+ASSERTION FAILED:../src/device/peripheral/vdev/vdev_udp.c:device_init_vdev_udp:106:err == STD_E_OK
+[ launcher: UIHttpServer start detected ]
+[ launcher: connected to UIcomm ]
+[ launcher: ready to start on left course ]
+[ launcher: Go to the start, Ready? ]
+[ launcher: 3...2...1... ]
+[ launcher: Go!!!!!!!! ]
+[ launcher: end of this race ]
+[ launcher: left: passed Start Gate ]

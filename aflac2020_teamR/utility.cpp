@@ -130,3 +130,6 @@ int8_t OutlierTester::test(double sample) { // sample is an outlier when true is
     }
 }
 
+int own_abs(int num){
+    return (num > 0) ? num : -num;
+}

@@ -194,10 +194,10 @@ private:
     SonarSensor*    sonarSensor;
     GyroSensor*     gyroSensor;
     ColorSensor*    colorSensor;
-    double distance, runDistance, azimuth, locX, locY, sonarDistance;
+    double distance, runDistance, azimuth, locX, locY;
     int8_t process_count;
-    int16_t traceCnt, prevGS, curRgbSum, prevRgbSum;
-    int32_t prevAngL, prevAngR, notifyDistance, gsDiff, timeDiff;
+    int16_t traceCnt, prevGS, curRgbSum, prevRgbSum, curAngle, prevAngle, curDegree, prevDegree;
+    int32_t prevAngL, prevAngR, notifyDistance, sonarDistance;
     bool touch_flag, sonar_flag, lost_flag, frozen, line_over_flg, moveBack_flg, adjust_flg;
 
     rgb_raw_t cur_rgb;
@@ -213,12 +213,6 @@ private:
     bool check_sonar(int16_t sonar_alert_dist_from, int16_t sonar_alert_dist_to);
     bool check_lost(void);
     bool check_tilt(void);
-
-    int curAngle; //sano
-    int prevAngle; //sano
-    bool right_angle;//sano
-
-
 protected:
 public:
     Observer();
