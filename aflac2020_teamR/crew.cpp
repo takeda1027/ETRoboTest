@@ -9,7 +9,6 @@
 #include "app.h"
 #include "crew.hpp"
 
-///
 
 // global variables to pass FIR-filtered color from Observer to Navigator and its sub-classes
 rgb_raw_t g_rgb;
