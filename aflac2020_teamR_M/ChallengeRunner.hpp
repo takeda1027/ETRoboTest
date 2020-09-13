@@ -22,8 +22,8 @@ public:
     ChallengeRunner(Motor* lm, Motor* rm, Motor* tm);
     void haveControl();
     void operate(); // method to invoke from the cyclic handler
+    void runChallenge();
     void setPwmLR(int p_L,int p_R,int mode, int proc_count);
-    void setPower(int 	power, int 	turnRatio);
     void rest();
     int8_t getPwmL();
     int8_t getPwmR();

@@ -124,103 +124,19 @@ void StateMachine::sendTrigger(uint8_t event) {
                     break;
             }
             break;
-        case ST_challenge_L:
+        case ST_challenge:
             switch (event) {
                 case EVT_slalom_reached:
-                    printf("ぶつかり\n");
+                    challengeRunner->rest();
                     armMotor->setPWM(-50);
-                    challengeRunner->haveControl();
-                    challengeRunner->setPwmLR(20,20,Mode_speed_constant,1);
-                    clock->sleep(1000);
-                    challengeRunner->setPwmLR(10,10,Mode_speed_constant,1);
-                    clock->sleep(1000);
-                    challengeRunner->rest();
-                    challengeRunner->setPwmLR(-20,-20,Mode_speed_constant,1);
-                    clock->sleep(500);
+                    challengeRunner->runChallenge();
                     armMotor->setPWM(80);
+                    ++challenge_stepNo;
+                    break;
+                case EVT_slalom_on:
                     challengeRunner->rest();
-                    challengeRunner->setPwmLR(43,40,Mode_speed_decreaseLR,40);
-                    break;
-                case EVT_obstcl_angle:
-                    if (challenge_stepNo == 2){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(15,-15,Mode_speed_incrsRdcrsL,90);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 6){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(10,15,Mode_speed_decreaseL,90);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 9){
-                        challengeRunner->rest();
-                        // challengeRunner->setPwmLR(27,-27,Mode_speed_constant,1);
-                        // clock->sleep(450);
-                        challengeRunner->setPwmLR(15,-15,Mode_speed_incrsRdcrsL,90);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 13){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(15,-15,Mode_speed_incrsRdcrsL,150);
-                        challenge_stepNo += 1;
-                    }
-                    break;
-                case EVT_obstcl_infront:
-                    if (challenge_stepNo == 3){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(32,27,Mode_speed_decreaseL,70);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 10){
-                        challengeRunner->rest();
-                        //challengeRunner->setPwmLR(30,20,Mode_speed_decreaseL,120);
-                        challengeRunner->setPwmLR(32,25,Mode_speed_decreaseL,100);
-                        challenge_stepNo += 1;
-                    }
-                    break;
-                case EVT_obstcl_reached:
-                    if (challenge_stepNo == 0){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(-15,17,Mode_speed_incrsLdcrsR,100);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 4){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(-15,-15,Mode_speed_constant,1);
-                        clock->sleep(300);
-                        challengeRunner->setPwmLR(15,-13,Mode_speed_constant,1);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 7){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(-15,10,Mode_speed_constant,1);
-                        clock->sleep(500);
-                        //challengeRunner->setPwmLR(-12,15,Mode_speed_constant,1);
-                        challengeRunner->setPwmLR(-10,15,Mode_speed_constant,1);
-                        clock->sleep(500);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 11){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(15,-15,Mode_speed_incrsRdcrsL,110);
-                        challenge_stepNo += 1;
-                    }
-                    break;
-                case EVT_obstcl_avoidable:
-                    if (challenge_stepNo == 1){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(25,20,Mode_speed_increaseL,150);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 5){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(14,16,Mode_speed_increaseR,80);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 8){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(20,28,Mode_speed_constant,1);
-                        challenge_stepNo += 1;
-                    }else if(challenge_stepNo == 12){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(25,25,Mode_speed_increaseR,30);
-                        challenge_stepNo += 1;
-                    }else if (challenge_stepNo == 14){
-                        challengeRunner->rest();
-                        challengeRunner->setPwmLR(25,30,Mode_speed_incrsLdcrsR,100);
-                        challenge_stepNo += 1;
-                    }
+                    challengeRunner->runChallenge();
+                    ++challenge_stepNo;
                     break;
                 default:
                     break;

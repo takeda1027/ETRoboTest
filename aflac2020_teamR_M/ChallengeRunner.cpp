@@ -81,7 +81,131 @@ void ChallengeRunner::operate() {
     // }
 }
 
-//　左右の車輪に駆動にそれぞれ値を指定する sano
+//　Activate challengeRunner PWM control according to challenge_stepNo
+void ChallengeRunner::runChallenge() {
+
+    switch (challenge_stepNo) {
+        case 0:
+            printf("ぶつかり\n");
+            haveControl();
+            setPwmLR(20,20,Mode_speed_constant,1);
+            clock->sleep(1000);
+            setPwmLR(10,10,Mode_speed_constant,1);
+            clock->sleep(1000);
+            rest();
+            setPwmLR(-20,-20,Mode_speed_constant,1);
+            clock->sleep(500);
+            rest();
+            if (_LEFT == 1){
+                setPwmLR(43,40,Mode_speed_decreaseLR,40);
+            }else{
+                setPwmLR(40,43,Mode_speed_decreaseLR,40);
+            }
+            break;
+        case 1:
+            pwm_L = _EDGE * -10;
+            pwm_R = _EDGE * 10;
+            setPwmLR(pwm_L,pwm_R,Mode_speed_constant,1);
+            break;
+        case 2:
+            if (_LEFT == 1){
+                setPwmLR(25,20,Mode_speed_increaseL,150);
+            }else{
+                setPwmLR(20,25,Mode_speed_increaseR,150);
+            }
+            break;
+        case 3:
+            pwm_L = _EDGE * 10;
+            pwm_R = _EDGE * -10;
+            setPwmLR(pwm_L,pwm_R,Mode_speed_constant,1);
+            break;
+        case 4:
+            if (_LEFT == 1){
+                setPwmLR(32,27,Mode_speed_decreaseL,70);
+            }else{
+                setPwmLR(27,32,Mode_speed_decreaseR,70);
+            }
+            break;
+        case 5:
+            setPwmLR(-15,-15,Mode_speed_constant,1);
+            clock->sleep(300);
+            break;
+        case 6:
+            if (_LEFT == 1){
+                setPwmLR(14,16,Mode_speed_increaseR,80);
+            }else{
+                setPwmLR(16,14,Mode_speed_increaseL,80);
+            }
+            break;
+        case 7:
+            if (_LEFT == 1){
+                setPwmLR(10,15,Mode_speed_decreaseL,90);
+            }else{
+                setPwmLR(15,10,Mode_speed_decreaseR,90);
+            }
+            break;
+        case 8:
+            if (_LEFT == 1){
+                setPwmLR(-15,10,Mode_speed_constant,1);
+                clock->sleep(500);
+                setPwmLR(-10,15,Mode_speed_constant,1);
+                clock->sleep(500);
+            }else{
+                setPwmLR(10,-15,Mode_speed_constant,1);
+                clock->sleep(500);
+                setPwmLR(15,-10,Mode_speed_constant,1);
+                clock->sleep(500);
+            }
+            break;
+        case 9:
+            if (_LEFT == 1){
+                setPwmLR(20,28,Mode_speed_constant,1);
+            }else{
+                setPwmLR(28,20,Mode_speed_constant,1);
+            }
+            break;
+        case 10:
+            pwm_L = _EDGE * 15;
+            pwm_R = _EDGE * -15;
+            setPwmLR(pwm_L,pwm_R,Mode_speed_constant,1);
+            break;
+        case 11:
+            if (_LEFT == 1){
+                setPwmLR(32,25,Mode_speed_decreaseL,100);
+            }else{
+                setPwmLR(25,32,Mode_speed_decreaseR,100);
+            }
+            break;
+        case 12:
+            pwm_L = _EDGE * 15;
+            pwm_R = _EDGE * -15;
+            setPwmLR(pwm_L,pwm_R,Mode_speed_constant,1);
+            break;
+        case 13:
+            if (_LEFT == 1){
+                setPwmLR(25,25,Mode_speed_increaseR,30);
+            }else{
+                setPwmLR(25,25,Mode_speed_increaseL,30);
+            }
+            break;
+        case 14:
+            pwm_L = _EDGE * 15;
+            pwm_R = _EDGE * -15;
+            setPwmLR(pwm_L,pwm_R,Mode_speed_constant,1);
+            break;
+        case 15:
+            if (_LEFT == 1){
+                setPwmLR(25,25,Mode_speed_increaseL,50);
+            }else{
+                setPwmLR(25,25,Mode_speed_increaseR,50);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+//　左右の車輪に駆動にそれぞれ値を指定する
 void ChallengeRunner::setPwmLR(int p_L,int p_R,int mode,int proc_count) {
     pwm_L = p_L;
     pwm_R = p_R;
