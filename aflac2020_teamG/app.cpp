@@ -8,14 +8,15 @@
 
 #include "app.h"
 
-#include "crew.hpp"
+#include "Observer.hpp"
+#include "Navigator.hpp"
+#include "StateMachine.hpp"
 
-Clock*      clock;
-Captain*    captain;
-Observer*   observer;
-Radioman*   radioman;
-Navigator*  activeNavigator = NULL;
-uint8_t     state = ST_takingOff;
+Clock*          clock;
+StateMachine*   stateMachine;
+Observer*       observer;
+Navigator*      activeNavigator = NULL;
+uint8_t         state = ST_start;
 
 // a cyclic handler to activate a task
 void task_activator(intptr_t tskid) {
@@ -38,32 +39,19 @@ void navigator_task(intptr_t unused) {
     if (activeNavigator != NULL) activeNavigator->operate();
 }
 
-// Radioman's resident task
-void radioman_task(intptr_t unused) {    
-    _debug(syslog(LOG_NOTICE, "%08u, radioman task ready", clock->now()));
-
-    while (true) { // infinite loop
-        if (radioman != NULL) radioman->operate();
-    }
-}
-
 void main_task(intptr_t unused) {
     clock    = new Clock;
-    captain  = new Captain;
-    radioman = new Radioman;
-    calibrator = new Calibrator;
+    stateMachine  = new StateMachine;
 
-    captain->takeoff();
+    stateMachine->initialize();
     
     // sleep until being waken up
     ER ercd = slp_tsk();
     assert(ercd == E_OK);
 
-    captain->land();
+    stateMachine->exit();
 
-    delete calibrator;
-    delete radioman;
-    delete captain;
+    delete stateMachine;
     delete clock;
     ext_tsk();
 }

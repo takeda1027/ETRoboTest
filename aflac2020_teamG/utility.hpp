@@ -156,5 +156,6 @@ public:
     ~OutlierTester();
 };
 
+int own_abs(int num);
 
 #endif /* utility_hpp */
