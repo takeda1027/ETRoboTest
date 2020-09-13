@@ -79,15 +79,15 @@ int16_t PIDcalculator::compute(int16_t sensor, int16_t target) {
     p = kp * diff[1];
     i = ki * integral;
     d = kd * (diff[1] - diff[0]) * 1000.0 / deltaT;
-    /*
+    ///*
     if (++traceCnt * PERIOD_NAV_TSK >= PERIOD_TRACE_MSG) {
         traceCnt = 0;
         char buf[128];
         snprintf(buf, sizeof(buf), "p = %lf, i = %lf, d = %lf", p, i, d);
-        _debug(syslog(LOG_NOTICE, "%08u, PIDcalculator::compute(): sensor = %d, target = %d, d0 = %d, d1 = %d +", 0, sensor, target, diff[0], diff[1]));
-        _debug(syslog(LOG_NOTICE, "%08u, PIDcalculator::compute(): sensor = %d, target = %d, %s", 0, sensor, target, buf));
+       // _debug(syslog(LOG_NOTICE, "%08u, PIDcalculator::compute(): sensor = %d, target = %d, d0 = %d, d1 = %d +", 0, sensor, target, diff[0], diff[1]));
+       // _debug(syslog(LOG_NOTICE, "%08u, PIDcalculator::compute(): sensor = %d, target = %d, %s", 0, sensor, target, buf));
     }
-    */
+    //*/
     return math_limit(p + i + d, minimum, maximum);
 }
 
@@ -130,6 +130,3 @@ int8_t OutlierTester::test(double sample) { // sample is an outlier when true is
     }
 }
 
-int own_abs(int num){
-    return (num > 0) ? num : -num;
-}

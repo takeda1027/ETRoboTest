@@ -25,6 +25,7 @@ extern "C" {
 #define PRIORITY_OBS_TSK    TMIN_APP_TPRI
 #define PRIORITY_NAV_TSK    TMIN_APP_TPRI
 #define PRIORITY_MAIN_TASK  (TMIN_APP_TPRI + 1)
+#define PRIORITY_RADIO_TASK (TMIN_APP_TPRI + 2)
 
 /**
  * Task periods in micro seconds
@@ -50,6 +51,7 @@ extern "C" {
 extern void main_task(intptr_t unused);
 extern void observer_task(intptr_t unused);
 extern void navigator_task(intptr_t unused);
+extern void radioman_task(intptr_t unused);
 
 extern void task_activator(intptr_t tskid);
 
