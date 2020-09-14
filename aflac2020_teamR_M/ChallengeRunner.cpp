@@ -218,7 +218,7 @@ void ChallengeRunner::setPwmLR(int p_L,int p_R,int mode,int proc_count) {
 void ChallengeRunner::rest() {
     freeze();
     clock->sleep(300);
-    freeze();
+    unfreeze();
 }
 
 int8_t ChallengeRunner::getPwmL() {

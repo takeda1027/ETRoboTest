@@ -15,7 +15,6 @@ class ChallengeRunner : public LineTracer {
 private:
     int8_t pwmMode;
     int16_t count, procCount, traceCnt;
-    bool frozen;
 protected:
 public:
     ChallengeRunner();
